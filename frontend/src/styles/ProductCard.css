@@ -1,0 +1,26 @@
+.product-card-amazon {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.product-card-amazon .relative {
+  /* match Tailwind's h-48 but ensure we never overflow: */
+  height: 12rem;
+  overflow: hidden;
+}
+
+.product-card-amazon img {
+  /* cover the box nicely */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.earth-score-badge {
+  /* let the badge sit cleanly on top of the image */
+  background-color: rgba(230, 244, 234, 0.9);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+} 

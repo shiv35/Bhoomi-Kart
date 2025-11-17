@@ -1,0 +1,101 @@
+:root {
+  /* Amazon Colors */
+  --amazon-orange: #FF9900;
+  --amazon-dark: #232F3E;
+  --amazon-light: #FFF;
+  --amazon-light-blue: #37475A;
+  --amazon-yellow: #FEBD69;
+  --amazon-link: #007185;
+
+  /* Keep your green colors */
+  --green-primary: #4CAF50;
+  --green-light: #81C784;
+  --green-dark: #388E3C;
+
+  /* Amazon Typography */
+  --amazon-font: "Amazon Ember", Arial, sans-serif;
+
+  /* New variables */
+  --spacing: 16px;
+  --card-radius: 4px;
+  --card-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Amazon-style buttons */
+.amazon-button {
+  background-color: var(--amazon-yellow);
+  border-color: #a88734 #9c7e31 #846a29;
+  color: #111;
+  padding: 8px 16px;
+  border-radius: 3px;
+  border-style: solid;
+  border-width: 1px;
+  cursor: pointer;
+  font-family: var(--amazon-font);
+  font-size: 14px;
+  line-height: 19px;
+}
+
+.amazon-button:hover {
+  background-color: #f3d078;
+}
+
+/* Green variant for eco products */
+.amazon-button-green {
+  background-color: var(--green-primary);
+  border-color: var(--green-dark);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 3px;
+  border-style: solid;
+  border-width: 1px;
+  cursor: pointer;
+  font-family: var(--amazon-font);
+  font-size: 14px;
+  line-height: 19px;
+}
+
+.amazon-button-green:hover {
+  background-color: var(--green-dark);
+}
+
+/* Amazon-style product cards */
+.product-card-amazon {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+  transition: all 0.3s ease;
+}
+
+.product-card-amazon:hover {
+  box-shadow: 0 0 11px rgba(33,33,33,.2);
+}
+
+.earth-score-badge {
+  background-color: var(--green-primary);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: bold;
+  display: inline-block;
+  margin-top: 8px;
+}
+
+.price-amazon {
+  color: #B12704;
+  font-size: 21px;
+  font-weight: 400;
+}
+
+/* Amazon-style links */
+a {
+  color: #007185;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #C7511F;
+  text-decoration: underline;
+}

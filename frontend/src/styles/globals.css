@@ -1,0 +1,43 @@
+/* GreenCart Global Styles */
+:root {
+  --primary-green: #4CAF50;
+  --secondary-green: #81C784;
+  --accent-yellow: #FFC107;
+  --light-bg: #f5f5f5;
+}
+
+/* Hero Section Gradient Background */
+.hero-gradient {
+  background: linear-gradient(135deg, #e6f4ea 0%, #c8e6c9 100%);
+}
+
+/* Product Card Styles */
+.product-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* EarthScore Badge */
+.earth-score-badge {
+  background: linear-gradient(135deg, #4CAF50 0%, #81C784 100%);
+  color: white;
+  font-weight: bold;
+}
+
+/* Button Styles */
+.btn-primary {
+  @apply bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 text-gray-800 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors;
+}
+
+/* Cart Icon Badge */
+.cart-badge {
+  @apply absolute -top-2 -right-2 bg-green-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center;
+}
