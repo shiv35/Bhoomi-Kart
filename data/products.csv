@@ -1,0 +1,9 @@
+product_id,product_name,category,price,image_url,manufacturing_emissions_gco2e,transport_distance_km,recyclability_percent,biodegradability_score,is_fair_trade,supply_chain_transparency_score,durability_rating,repairability_index
+1,Eco-Glass Water Bottle,Kitchen,24.99,https://i.imgur.com/example1.png,500,200,100,2,1,5,5,4
+2,Cheap Plastic Bottle,Kitchen,1.99,https://i.imgur.com/example2.png,2500,5000,5,1,0,1,1,1
+3,Organic Fair-Trade Coffee,Groceries,18.50,https://i.imgur.com/example3.png,300,8000,100,5,1,4,1,1
+4,Fast-Fashion T-Shirt,Apparel,9.99,https://i.imgur.com/example4.png,6000,12000,10,2,0,2,2,1
+5,Durable Canvas Backpack,Accessories,49.99,https://i.imgur.com/example5.png,3000,1500,60,3,1,3,5,3
+6,Local Artisan Soap,Beauty,12.00,https://i.imgur.com/example6.png,150,50,100,5,1,5,2,1
+7,Imported Smartphone,Electronics,899.00,https://i.imgur.com/example7.png,50000,15000,15,1,0,2,3,2
+8,Recycled Paper Journal,Office,15.99,https://i.imgur.com/example8.png,400,500,100,5,1,4,3,1
