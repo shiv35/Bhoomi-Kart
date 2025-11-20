@@ -1,0 +1,18 @@
+user_id,name,pincode,latitude,longitude,preferred_categories
+1,Priya Sharma,400701,19.1296,72.8367,kitchen,personal-care
+2,Rahul Mehta,400703,19.1350,72.8400,electronics,kitchen
+3,Amit Kumar,400705,19.1400,72.8450,clothing,home
+4,Sneha Patel,400702,19.1320,72.8380,personal-care,kitchen
+5,Vikram Rao,400704,19.1380,72.8420,electronics,home
+6,Neha Singh,400706,19.1420,72.8470,kitchen,clothing
+7,Arjun Desai,400705,19.1400,72.8450,home,electronics
+8,Pooja Verma,400708,19.1450,72.8500,personal-care,clothing
+9,Karan Joshi,400701,19.1296,72.8367,kitchen,electronics
+10,Anjali Nair,400703,19.1350,72.8400,clothing,personal-care
+11,Siddharth Roy,400705,19.1400,72.8450,home,kitchen
+12,Meera Gupta,400707,19.1430,72.8480,electronics,clothing
+13,Rohit Sharma,400702,19.1320,72.8380,kitchen,home
+14,Divya Iyer,400704,19.1380,72.8420,personal-care,electronics
+15,Arun Menon,400706,19.1420,72.8470,clothing,kitchen
+16,Test User Office,400705,19.1400,72.8450,office,groceries
+17,Test User Groceries,400701,19.1296,72.8367,groceries,office

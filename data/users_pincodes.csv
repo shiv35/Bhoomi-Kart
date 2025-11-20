@@ -1,0 +1,42 @@
+user_id,name,pincode,latitude,longitude,category1,category2
+1,Priya Sharma,400701,19.1296,72.8367,kitchen,personal-care
+2,Rahul Mehta,400703,19.135,72.84,electronics,kitchen
+3,Amit Kumar,400705,19.14,72.845,clothing,home
+4,Sneha Patel,400702,19.132,72.838,personal-care,kitchen
+5,Vikram Rao,400704,19.138,72.842,electronics,home
+6,Neha Singh,400706,19.142,72.847,kitchen,clothing
+7,Arjun Desai,400705,19.14,72.845,home,electronics
+8,Pooja Verma,400708,19.145,72.85,personal-care,clothing
+9,Karan Joshi,400701,19.1296,72.8367,kitchen,electronics
+10,Anjali Nair,400703,19.135,72.84,clothing,personal-care
+11,Siddharth Roy,400705,19.14,72.845,home,kitchen
+12,Meera Gupta,400707,19.143,72.848,electronics,clothing
+13,Rohit Sharma,400702,19.132,72.838,kitchen,home
+14,Divya Iyer,400704,19.138,72.842,personal-care,electronics
+15,Arun Menon,400706,19.142,72.847,clothing,kitchen
+16,Test User Office,400705,19.14,72.845,office,groceries
+17,Test User Groceries,400701,19.1296,72.8367,groceries,office
+18,Test User 18,400701,19.1296,72.8367,kitchen,home
+19,Test User 19,400701,19.1296,72.8467,electronics,beauty
+20,Test User 20,400701,19.1296,72.85669999999999,clothing,kitchen
+21,Test User 21,400702,19.1396,72.8367,electronics,beauty
+22,Test User 22,400702,19.1396,72.8467,clothing,kitchen
+23,Test User 23,400702,19.1396,72.85669999999999,home,electronics
+24,Test User 24,400703,19.1496,72.8367,clothing,kitchen
+25,Test User 25,400703,19.1496,72.8467,home,electronics
+26,Test User 26,400703,19.1496,72.85669999999999,beauty,clothing
+27,Test User 27,400704,19.1596,72.8367,home,electronics
+28,Test User 28,400704,19.1596,72.8467,beauty,clothing
+29,Test User 29,400704,19.1596,72.85669999999999,kitchen,home
+30,Test User 30,400705,19.1696,72.8367,beauty,clothing
+31,Test User 31,400705,19.1696,72.8467,kitchen,home
+32,Test User 32,400705,19.1696,72.85669999999999,electronics,beauty
+33,Test User 33,400706,19.1796,72.8367,kitchen,home
+34,Test User 34,400706,19.1796,72.8467,electronics,beauty
+35,Test User 35,400706,19.1796,72.85669999999999,clothing,kitchen
+36,Test User 36,400707,19.1896,72.8367,electronics,beauty
+37,Test User 37,400707,19.1896,72.8467,clothing,kitchen
+38,Test User 38,400707,19.1896,72.85669999999999,home,electronics
+39,Test User 39,400708,19.1996,72.8367,clothing,kitchen
+40,Test User 40,400708,19.1996,72.8467,home,electronics
+41,Test User 41,400708,19.1996,72.85669999999999,beauty,clothing
