@@ -1,0 +1,51 @@
+.product {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    /* ← fill the grid cell completely */
+    margin: 0;
+    /* ← remove all extra breathing room */
+    padding: 16px;
+    /* ← internal padding for content */
+    background-color: white;
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+}
+.product__rating {
+    display: flex;
+}
+
+.product>img {
+    max-height: 200px;
+    width: 100%;
+    object-fit: contain;
+    margin-bottom: 15px;
+}
+
+.product>button {
+    background-color: #febd69;
+    color: black;
+    padding: 10px 30px;
+    margin-top: 10px;
+    border: 0;
+    border-width: 0px;
+    border-radius: 5px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    /* font-weight: 500; */
+    font-weight: bold;
+}
+
+.product>button:hover {
+    background-color: #f9c989;
+}
+
+.product__price {
+    margin-top: 5px;
+}
+
+.product__info {
+    height: 100px;
+    margin-bottom: 15px;
+}
