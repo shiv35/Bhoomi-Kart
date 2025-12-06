@@ -54,10 +54,37 @@ export const getProductById = async (id: number): Promise<Product> => {
   return response.data;
 };
 
-// right below getProductById…
-export const getRecommendations = async (productId: number): Promise<Product[]> => {
-  const resp = await apiClient.get<Product[]>(`/api/products/${productId}/recommendations`);
-  return resp.data;
+// Get recommendations based on cart items
+export interface Recommendation {
+  product_id: number;
+  product_name: string;
+  price: number;
+  earth_score: number;
+  category: string;
+  image_url: string;
+  confidence: number;
+  reason: string;
+}
+
+export interface RecommendationResponse {
+  success: boolean;
+  recommendations: Recommendation[];
+  count: number;
+  cart_items?: number[];
+  message?: string;
+}
+
+export const getRecommendationsFromCart = async (userId: string, topN: number = 5): Promise<RecommendationResponse> => {
+  const response = await apiClient.get<RecommendationResponse>(`/api/recommendations/cart/${userId}?top_n=${topN}`);
+  return response.data;
+};
+
+export const getRecommendations = async (cartItems: number[], topN: number = 5): Promise<RecommendationResponse> => {
+  const response = await apiClient.post<RecommendationResponse>('/api/recommendations', {
+    cart_items: cartItems,
+    top_n: topN
+  });
+  return response.data;
 };
 
 // Add these new API methods

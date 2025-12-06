@@ -27,8 +27,10 @@ const ProductDetail: React.FC = () => {
         const productData = await getProductById(parseInt(productId, 10));
         setProduct(productData);
 
-        const recommendationData = await getRecommendations(parseInt(productId, 10));
-        setRecommendations(recommendationData);
+        const products:number[] = [parseInt(productId, 10)];
+
+        const recommendationData = await getRecommendations(products);
+        setRecommendations(recommendationData.recommendations);
 
         setError(null);
       } catch (err) {

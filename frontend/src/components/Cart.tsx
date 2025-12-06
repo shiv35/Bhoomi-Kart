@@ -61,6 +61,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { ROUTES } from '../utils/constants';
+import ProductRecommendations from './ProductRecommendations';
 
 interface CartItem {
   id: string;
@@ -508,6 +509,13 @@ const Cart: React.FC = () => {
             
             {renderCartItems()}
           </Paper>
+
+          {/* Product Recommendations */}
+          {items.length > 0 && (
+            <Paper sx={{ p: 3, mb: 3 }}>
+              <ProductRecommendations maxItems={5} />
+            </Paper>
+          )}
 
           {/* Group Buy Suggestions */}
           <Paper sx={{ p: 3, mb: 3, background: 'linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)' }}>

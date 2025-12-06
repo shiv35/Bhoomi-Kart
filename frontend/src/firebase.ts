@@ -5,15 +5,14 @@ import { getAuth } from "firebase/auth";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyCiyNcghTTHXRBonV2TyAOtj5S1gCIAtf8",
-  authDomain: "greencart-hackathon.firebaseapp.com",
-  projectId: "greencart-hackathon",
-  storageBucket: "greencart-hackathon.firebasestorage.app",
-  messagingSenderId: "324707820463",
-  appId: "1:324707820463:web:62b2c435757e0c4b5a455a",
-  measurementId: "G-XQZ35FQ7R5"
+  apiKey: "AIzaSyB15z8DfhfNtbIt8LvrX88PgbHD3ybBIdI",
+  authDomain: "bhoomikart-65906.firebaseapp.com",
+  projectId: "bhoomikart-65906",
+  storageBucket: "bhoomikart-65906.firebasestorage.app",
+  messagingSenderId: "856552282384",
+  appId: "1:856552282384:web:a2fa86c19337b5d596ed95",
+  measurementId: "G-ZDXLZF3QQS"
 };
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 

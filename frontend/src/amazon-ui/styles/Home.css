@@ -1,0 +1,24 @@
+.home {
+    display: flex;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 2000px;
+}
+
+.home__image {
+    width: 100%;
+    z-index: -1;
+    margin-bottom: -150px;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+}
+
+.home__row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    /*  → each card is at least 300px, but stretches to fill equally */
+    gap: 0;
+    /* ← no gutter between cards */
+    margin: 40px 0 0 0;
+    /* ← push down from header but no side margins */
+}
