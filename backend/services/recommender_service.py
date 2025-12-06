@@ -275,11 +275,16 @@ class AprioriRecommender:
         Returns:
             List of recommended products with confidence scores
         """
+        print(f"🔍 [AprioriRecommender] get_recommendations called with cart_items: {cart_items}, top_n: {top_n}")
+        print(f"📊 [AprioriRecommender] Total association rules: {len(self.association_rules)}")
+        
         if not cart_items:
+            print("⚠️ [AprioriRecommender] Cart is empty, returning empty list")
             return []
         
         cart_set = set(cart_items)
         recommendations = defaultdict(float)
+        matched_rules = 0
         
         # Find rules where cart items match the antecedent
         for rule in self.association_rules:
@@ -288,6 +293,7 @@ class AprioriRecommender:
             
             # Check if cart contains the antecedent
             if antecedent_set.issubset(cart_set):
+                matched_rules += 1
                 # Recommend items from consequent that are not in cart
                 for item in consequent_set:
                     if item not in cart_set:
@@ -297,6 +303,8 @@ class AprioriRecommender:
                             rule['confidence'] * rule['support']  # Weighted score
                         )
         
+        print(f"📊 [AprioriRecommender] Matched {matched_rules} rules, found {len(recommendations)} candidate recommendations")
+        
         # Sort by score and return top N
         sorted_recommendations = sorted(
             recommendations.items(),
@@ -304,7 +312,7 @@ class AprioriRecommender:
             reverse=True
         )[:top_n]
         
-        return [
+        result = [
             {
                 'product_id': product_id,
                 'confidence': round(score, 3),
@@ -312,6 +320,9 @@ class AprioriRecommender:
             }
             for product_id, score in sorted_recommendations
         ]
+        
+        print(f"✅ [AprioriRecommender] Returning {len(result)} recommendations")
+        return result
 
 
 class RecommenderService:
@@ -363,11 +374,16 @@ class RecommenderService:
         Returns:
             List of recommended products with full details
         """
+        print(f"🔍 [RecommenderService] Getting recommendations for cart_items: {cart_items}, top_n: {top_n}")
+        
         if not self.is_trained:
+            print("🔄 [RecommenderService] Recommender not trained, training now...")
             self.train()
         
         # Get recommendations from Apriori
+        print(f"🔍 [RecommenderService] Getting Apriori recommendations...")
         recommendations = self.recommender.get_recommendations(cart_items, top_n * 2)
+        print(f"📊 [RecommenderService] Apriori returned {len(recommendations)} recommendations")
         
         # Enrich with product details
         enriched_recommendations = []
@@ -388,16 +404,43 @@ class RecommenderService:
                     'reason': rec['reason']
                 })
         
-        # If we don't have enough recommendations, add popular products
-        if len(enriched_recommendations) < top_n:
-            # Get top products by earth_score that are not in cart
-            cart_set = set(cart_items)
-            available_products = self.products_df[
-                ~self.products_df['product_id'].isin(cart_set)
-            ].nlargest(top_n, 'earth_score')
+        print(f"📊 [RecommenderService] Enriched {len(enriched_recommendations)} recommendations from Apriori")
+        
+        # Get cart item categories for category-based recommendations
+        cart_set = set(cart_items)
+        cart_products = self.products_df[self.products_df['product_id'].isin(cart_set)]
+        cart_categories = cart_products['category'].unique().tolist() if not cart_products.empty else ['home']
+        print(f"📊 [RecommenderService] Cart categories: {cart_categories}")
+        
+        # Category relationships for fallback
+        category_relationships = {
+            'kitchen': ['home', 'electronics'],
+            'home': ['kitchen', 'beauty', 'electronics'],
+            'electronics': ['home', 'kitchen'],
+            'beauty': ['home', 'clothing'],
+            'clothing': ['beauty', 'home']
+        }
+        
+        # If we don't have enough recommendations, add category-based and popular products
+        min_recommendations = max(2, top_n)  # Always return at least 2 recommendations
+        if len(enriched_recommendations) < min_recommendations:
+            print(f"📊 [RecommenderService] Need more recommendations. Current: {len(enriched_recommendations)}, Target: {min_recommendations}")
             
-            for _, product in available_products.iterrows():
-                if len(enriched_recommendations) >= top_n:
+            # First, try to get products from same or related categories
+            related_categories = set(cart_categories)
+            for cat in cart_categories:
+                related_categories.update(category_relationships.get(cat.lower(), []))
+            
+            print(f"📊 [RecommenderService] Related categories: {related_categories}")
+            
+            # Get products from related categories
+            category_products = self.products_df[
+                (self.products_df['category'].isin(related_categories)) &
+                (~self.products_df['product_id'].isin(cart_set))
+            ].nlargest(min_recommendations * 2, 'earth_score')
+            
+            for _, product in category_products.iterrows():
+                if len(enriched_recommendations) >= min_recommendations:
                     break
                 
                 # Check if already in recommendations
@@ -409,11 +452,39 @@ class RecommenderService:
                         'earth_score': int(product.get('earth_score', 75)),
                         'category': product.get('category', 'home'),
                         'image_url': f"/images/{product.get('category', 'home').lower()}.png",
-                        'confidence': 0.1,  # Lower confidence for fallback
-                        'reason': "Popular sustainable product"
+                        'confidence': 0.2,  # Medium confidence for category-based
+                        'reason': f"Similar to items in your cart ({product.get('category', 'home')} category)"
                     })
+            
+            print(f"📊 [RecommenderService] After category-based: {len(enriched_recommendations)} recommendations")
+            
+            # If still not enough, add top products by earth_score
+            if len(enriched_recommendations) < min_recommendations:
+                print(f"📊 [RecommenderService] Still need more, adding popular products...")
+                available_products = self.products_df[
+                    ~self.products_df['product_id'].isin(cart_set)
+                ].nlargest(min_recommendations * 2, 'earth_score')
+                
+                for _, product in available_products.iterrows():
+                    if len(enriched_recommendations) >= min_recommendations:
+                        break
+                    
+                    # Check if already in recommendations
+                    if product['product_id'] not in [r['product_id'] for r in enriched_recommendations]:
+                        enriched_recommendations.append({
+                            'product_id': int(product['product_id']),
+                            'product_name': product['product_name'],
+                            'price': float(product['price']),
+                            'earth_score': int(product.get('earth_score', 75)),
+                            'category': product.get('category', 'home'),
+                            'image_url': f"/images/{product.get('category', 'home').lower()}.png",
+                            'confidence': 0.1,  # Lower confidence for fallback
+                            'reason': "Popular sustainable product"
+                        })
         
-        return enriched_recommendations[:top_n]
+        result = enriched_recommendations[:top_n]
+        print(f"✅ [RecommenderService] Returning {len(result)} recommendations")
+        return result
     
     def save_model(self, filepath: str):
         """Save the trained model to disk"""

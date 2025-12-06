@@ -496,7 +496,10 @@ class RecommendationRequest(BaseModel):
 @app.post("/api/recommendations")
 def get_recommendations(request: RecommendationRequest):
     """Get product recommendations based on cart items using Apriori algorithm"""
+    print(f"🔍 [API] POST /api/recommendations called with cart_items: {request.cart_items}, top_n: {request.top_n}")
+    
     if not recommender_service:
+        print("❌ [API] Recommender service not initialized")
         raise HTTPException(status_code=503, detail="Recommender service not initialized")
     
     try:
@@ -504,13 +507,14 @@ def get_recommendations(request: RecommendationRequest):
             cart_items=request.cart_items,
             top_n=request.top_n
         )
+        print(f"✅ [API] Returning {len(recommendations)} recommendations")
         return {
             "success": True,
             "recommendations": recommendations,
             "count": len(recommendations)
         }
     except Exception as e:
-        print(f"❌ Error getting recommendations: {str(e)}")
+        print(f"❌ [API] Error getting recommendations: {str(e)}")
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
@@ -518,15 +522,20 @@ def get_recommendations(request: RecommendationRequest):
 @app.get("/api/recommendations/cart/{user_id}")
 def get_recommendations_from_cart(user_id: str, top_n: int = 5):
     """Get recommendations based on user's current cart"""
+    print(f"🔍 [API] GET /api/recommendations/cart/{user_id} called with top_n: {top_n}")
+    
     if not recommender_service:
+        print("❌ [API] Recommender service not initialized")
         raise HTTPException(status_code=503, detail="Recommender service not initialized")
     
     try:
         # Get user's cart
         cart_summary = cart_service.get_cart_summary(user_id)
         cart_items = [item['product_id'] for item in cart_summary.get('items', [])]
+        print(f"📊 [API] User cart has {len(cart_items)} items: {cart_items}")
         
         if not cart_items:
+            print("⚠️ [API] Cart is empty")
             return {
                 "success": True,
                 "recommendations": [],
@@ -538,6 +547,7 @@ def get_recommendations_from_cart(user_id: str, top_n: int = 5):
             cart_items=cart_items,
             top_n=top_n
         )
+        print(f"✅ [API] Returning {len(recommendations)} recommendations for user {user_id}")
         return {
             "success": True,
             "recommendations": recommendations,
@@ -545,7 +555,7 @@ def get_recommendations_from_cart(user_id: str, top_n: int = 5):
             "cart_items": cart_items
         }
     except Exception as e:
-        print(f"❌ Error getting recommendations: {str(e)}")
+        print(f"❌ [API] Error getting recommendations: {str(e)}")
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))

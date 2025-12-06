@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { 
-  Container, 
-  Typography, 
-  Box, 
-  Paper, 
-  GridLegacy as Grid, 
-  Card, 
+import {
+  Container,
+  Typography,
+  Box,
+  Paper,
+  GridLegacy as Grid,
+  Card,
   CardContent,
   Button,
   IconButton,
@@ -17,6 +17,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../utils/constants';
+import ProductRecommendations from './ProductRecommendations';
 
 const CartPage: React.FC = () => {
   const { items, removeFromCart, updateQuantity, getTotalPrice, getAverageEarthScore, clearCart } = useCart();
@@ -32,7 +33,7 @@ const CartPage: React.FC = () => {
       beauty: "/images/beauty.png",
       clothing: "/images/clothing.png",
     };
-    
+
     const categoryKey = category?.toLowerCase() || 'home';
     return categoryImages[categoryKey] || "/images/home.png";
   };
@@ -97,7 +98,7 @@ const CartPage: React.FC = () => {
           <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
             Start adding sustainable products to make a positive impact!
           </Typography>
-          
+
           <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Button
               variant="contained"
@@ -119,7 +120,7 @@ const CartPage: React.FC = () => {
               Calculate Impact of a product via EarthScore Intelligence
             </Button>
           </Box>
-          
+
           {/* Browse by Category Section */}
           <Box sx={{ mt: 6 }}>
             <Typography variant="h6" gutterBottom>
@@ -219,7 +220,7 @@ const CartPage: React.FC = () => {
                   </Grid>
                   <Grid item xs={4} sm={2}>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <IconButton 
+                      <IconButton
                         size="small"
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
                         disabled={item.quantity <= 1}
@@ -227,7 +228,7 @@ const CartPage: React.FC = () => {
                         <Minus size={16} />
                       </IconButton>
                       <Typography sx={{ mx: 2 }}>{item.quantity}</Typography>
-                      <IconButton 
+                      <IconButton
                         size="small"
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
                       >
@@ -241,7 +242,7 @@ const CartPage: React.FC = () => {
                     </Typography>
                   </Grid>
                   <Grid item xs={2} sm={1}>
-                    <IconButton 
+                    <IconButton
                       color="error"
                       onClick={() => removeFromCart(item.id)}
                     >
@@ -252,6 +253,13 @@ const CartPage: React.FC = () => {
               </CardContent>
             </Card>
           ))}
+
+          {/* Product Recommendations */}
+          {items.length > 0 && (
+            <Paper sx={{ p: 3, mt: 3 }}>
+              <ProductRecommendations maxItems={5} title="Recommended for You" />
+            </Paper>
+          )}
         </Grid>
 
         <Grid item xs={12} md={4}>
@@ -259,7 +267,7 @@ const CartPage: React.FC = () => {
             <Typography variant="h5" gutterBottom>
               Order Summary
             </Typography>
-            
+
             <Box sx={{ my: 2 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography>Subtotal</Typography>
@@ -288,8 +296,8 @@ const CartPage: React.FC = () => {
               </Typography>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography variant="body2">Avg EarthScore</Typography>
-                <Typography 
-                  variant="body2" 
+                <Typography
+                  variant="body2"
                   sx={{ color: getEarthScoreColor(avgEarthScore), fontWeight: 'bold' }}
                 >
                   {avgEarthScore}
@@ -303,8 +311,8 @@ const CartPage: React.FC = () => {
               </Box>
             </Paper>
 
-            <Button 
-              variant="contained" 
+            <Button
+              variant="contained"
               color="success"
               fullWidth
               size="large"
