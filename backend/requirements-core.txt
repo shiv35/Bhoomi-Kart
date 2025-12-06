@@ -1,0 +1,24 @@
+# Core requirements for recommender system (without AI agents)
+# Use this if you get langchain dependency conflicts
+
+# Core dependencies
+fastapi==0.115.13
+uvicorn[standard]==0.34.3
+python-dotenv==1.1.0
+python-multipart==0.0.20
+
+# Data processing (required for recommender)
+numpy==1.26.4
+pandas==2.3.0
+scikit-learn==1.7.0
+xgboost==3.0.2
+
+# Database and caching (optional - falls back to in-memory)
+redis==5.0.1
+
+# Location services
+geopy==2.4.1
+
+# Rich terminal output
+rich==14.0.0
+

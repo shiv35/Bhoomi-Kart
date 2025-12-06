@@ -19,6 +19,7 @@ from services.group_buy_service import GroupBuyService
 from clustering_service import GroupBuyClusteringService
 from services.filter_service import ProductFilterService
 from services.express_checkout_service import ExpressCheckoutService
+from services.recommender_service import RecommenderService
 from utils.message_templates import MessageTemplates
 
 app = FastAPI(title="GreenCart API")
@@ -48,11 +49,12 @@ group_buy_service = None
 clustering_service = None
 filter_service = None
 express_checkout_service = None
+recommender_service = None
 
 # Startup Event
 @app.on_event("startup")
 def startup_event():
-    global products_df, agent, imputer, model, cart_service, group_buy_service, clustering_service, filter_service, express_checkout_service
+    global products_df, agent, imputer, model, cart_service, group_buy_service, clustering_service, filter_service, express_checkout_service, recommender_service
 
     # Load product data
     products_df = pd.read_csv("../data/products_large.csv")
@@ -71,11 +73,22 @@ def startup_event():
     clustering_service = GroupBuyClusteringService('../data/users_pincodes.csv')
     filter_service = ProductFilterService(products_df)
     express_checkout_service = ExpressCheckoutService()
+    recommender_service = RecommenderService(products_df)
     print("✅ Services initialized")
 
-    # Create enhanced agent
-    agent = create_greencart_agent()
-    print("✅ Enhanced GreenCart agent created")
+    # Train recommender system (this will generate synthetic data and train Apriori)
+    print("🔄 Training recommender system...")
+    recommender_service.train(num_transactions=2000)
+    print("✅ Recommender system trained")
+
+    # Create enhanced agent (optional - requires OPENAI_API_KEY)
+    try:
+        agent = create_greencart_agent()
+        print("✅ Enhanced GreenCart agent created")
+    except Exception as e:
+        print(f"⚠️  Warning: Could not create AI agent: {e}")
+        print("   AI chat features will be disabled, but other features will work.")
+        agent = None
 
 # --- API Endpoints ---
 
@@ -234,7 +247,13 @@ class ChatRequest(BaseModel):
 async def chat_with_agent(request: ChatRequest):
     """Enhanced chat endpoint with multi-agent support and structured product data"""
     if not agent:
-        raise HTTPException(status_code=500, detail="Agent not configured")
+        return {
+            "reply": "AI chat features are currently disabled. Please set OPENAI_API_KEY in your .env file to enable AI assistance. "
+                    "However, you can still browse products, use the recommender system, and manage your cart!",
+            "agent_used": "none",
+            "routing": {},
+            "products": []
+        }
 
     try:
         # Initialize state with specialist agents
@@ -467,6 +486,69 @@ async def get_group_buy_suggestions(request: dict):
 def health_check():
     """Health check endpoint"""
     return {"status": "healthy"}
+
+# Recommender endpoints
+
+class RecommendationRequest(BaseModel):
+    cart_items: List[int]
+    top_n: int = 5
+
+@app.post("/api/recommendations")
+def get_recommendations(request: RecommendationRequest):
+    """Get product recommendations based on cart items using Apriori algorithm"""
+    if not recommender_service:
+        raise HTTPException(status_code=503, detail="Recommender service not initialized")
+    
+    try:
+        recommendations = recommender_service.get_recommendations(
+            cart_items=request.cart_items,
+            top_n=request.top_n
+        )
+        return {
+            "success": True,
+            "recommendations": recommendations,
+            "count": len(recommendations)
+        }
+    except Exception as e:
+        print(f"❌ Error getting recommendations: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/recommendations/cart/{user_id}")
+def get_recommendations_from_cart(user_id: str, top_n: int = 5):
+    """Get recommendations based on user's current cart"""
+    if not recommender_service:
+        raise HTTPException(status_code=503, detail="Recommender service not initialized")
+    
+    try:
+        # Get user's cart
+        cart_summary = cart_service.get_cart_summary(user_id)
+        cart_items = [item['product_id'] for item in cart_summary.get('items', [])]
+        
+        if not cart_items:
+            return {
+                "success": True,
+                "recommendations": [],
+                "count": 0,
+                "message": "Cart is empty. Add items to get recommendations!"
+            }
+        
+        recommendations = recommender_service.get_recommendations(
+            cart_items=cart_items,
+            top_n=top_n
+        )
+        return {
+            "success": True,
+            "recommendations": recommendations,
+            "count": len(recommendations),
+            "cart_items": cart_items
+        }
+    except Exception as e:
+        print(f"❌ Error getting recommendations: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 if __name__ == "__main__":

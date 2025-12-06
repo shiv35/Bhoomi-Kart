@@ -12,14 +12,18 @@ numpy==1.26.4
 pandas==2.3.0
 scikit-learn==1.7.0
 xgboost==3.0.2
-langchain==0.3.0
 
-# AI/ML dependencies
+# AI/ML dependencies - LangChain ecosystem
+# IMPORTANT: If you get dependency conflicts, see INSTALL_FIX.md
+# Install LangChain packages separately in this order:
+# 1. pip install langchain==0.3.0 langchain-core
+# 2. pip install langchain-google-genai==2.0.0 langchain-community==0.3.0
+# 3. pip install langchain-openai langgraph
 langchain==0.3.0
 langchain-google-genai==2.0.0
 langchain-community==0.3.0
+langchain-openai>=0.2.0,!=0.0.5
 langgraph>=0.3.0
-langchain-openai==0.0.5
 # Database and caching
 redis==5.0.1
 aioredis==2.0.1

@@ -324,7 +324,9 @@ def create_agent_graph():
     """Create the enhanced agent graph with orchestrator"""
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
-        raise ValueError("OPENAI_API_KEY not found in .env file.")
+        print("⚠️  WARNING: OPENAI_API_KEY not found. AI chat features will be disabled.")
+        print("   To enable AI chat, create a .env file with: OPENAI_API_KEY=your_key_here")
+        return None
 
     # System prompt for main agent
     system_prompt = """You are GreenCart's main assistant. You coordinate with specialist agents and use tools when needed.
@@ -384,6 +386,18 @@ Always be helpful and guide users toward sustainable choices."""
 def create_greencart_agent():
     """Create the full GreenCart agent with all specialists"""
     agent_graph = create_agent_graph()
+    
+    # If agent graph is None (no API key), return a mock agent that gives helpful message
+    if agent_graph is None:
+        def mock_agent(state):
+            from langchain_core.messages import AIMessage
+            state["messages"].append(AIMessage(
+                content="AI chat features are currently disabled. Please set OPENAI_API_KEY in your .env file to enable AI assistance. "
+                       "However, you can still browse products, use the recommender system, and manage your cart!"
+            ))
+            return state
+        return mock_agent
+    
     specialist_agents = initialize_agents()
 
     # Wrapper to inject specialist agents into state
