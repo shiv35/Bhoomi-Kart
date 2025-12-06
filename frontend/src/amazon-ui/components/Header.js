@@ -17,8 +17,8 @@ function Header() {
       <Link to="/">
         <img
           className="header__logo"
-          src="/images/bhoomi.png"
-          alt="bhoomi logo"
+          src="/images/amazon.png"
+          alt="amazon logo"
         />
       </Link>
 

@@ -1,4 +1,4 @@
-.bhoomi-nav {
+.amazon-nav {
   background-color: #232f3e; /* Background color */
   color: #ffffff; /* Text color */
   display: flex;
@@ -10,29 +10,29 @@
   height: 40px; /* Fixed height of the navigation bar */
 }
 
-.bhoomi-nav-section {
+.amazon-nav-section {
   display: flex;
   align-items: center; /* Vertically center the list and button */
 }
 
-.bhoomi-nav-list {
+.amazon-nav-list {
   list-style: none;
   display: flex;
   margin: 10px;
   padding: 10px 10px;
 }
 
-.bhoomi-nav-list li {
+.amazon-nav-list li {
   margin-right: 20px;
 }
 
-.bhoomi-nav a {
+.amazon-nav a {
   text-decoration: none;
   color: #ffffff; /* Text color */
   transition: color 0.3s;
 }
 
-.bhoomi-nav a:hover {
+.amazon-nav a:hover {
   color: #FF9900; /* Change text color on hover */
 }
 

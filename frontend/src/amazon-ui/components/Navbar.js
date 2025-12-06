@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import '../styles/navbar.css';
-const bhoomiNavigationBar = () => {
+const AmazonNavigationBar = () => {
   const [showPopover, setShowPopover] = useState(true);
   const [dontShowAgain, setDontShowAgain] = useState(false);
 
@@ -43,9 +43,9 @@ const bhoomiNavigationBar = () => {
 
 
   return (
-    <div className="bhoomi-nav">
-      <div className="bhoomi-nav-section">
-        <ul className="bhoomi-nav-list">
+    <div className="amazon-nav">
+      <div className="amazon-nav-section">
+        <ul className="amazon-nav-list">
           <li>
             <a href="#">All</a>
           </li>
@@ -62,13 +62,13 @@ const bhoomiNavigationBar = () => {
             <a href="#">Electronics</a>
           </li>
           <li>
-            <a href="#">bhoomi Pay</a>
+            <a href="#">Amazon Pay</a>
           </li>
           <li>
             <a href="#">Home & Kitchen</a>
           </li>
           <li>
-            <a href="#">bhoomi miniTV</a>
+            <a href="#">Amazon miniTV</a>
           </li>
           <li>
             <a href="#">New Releases</a>
@@ -130,4 +130,4 @@ const bhoomiNavigationBar = () => {
   );
 };
 
-export default bhoomiNavigationBar;
+export default AmazonNavigationBar;
