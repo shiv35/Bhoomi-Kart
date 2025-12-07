@@ -4,9 +4,22 @@ A sustainable e-commerce platform with AI-powered recommendations, EarthScore ra
 
 ## 🚀 Quick Start
 
+ ```bash
+python3.11 -m venv myenv
+```
+ ```bash
+source myenv/bin/activate
+```
+ ```bash
+pip install --upgrade pip
+```
+ ```bash
+pip install -r requirements.txt
+```
+
 ### Prerequisites
 
-- **Python 3.8+** (for backend)
+- **Python 3.11+** (for backend)
 - **Node.js 16+** and **npm/yarn** (for frontend)
 - **Redis** (optional, for cart persistence - falls back to in-memory if not available)
 - **Data files** in `data/` directory:

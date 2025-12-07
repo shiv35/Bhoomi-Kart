@@ -1,4 +1,19 @@
 # main.py
+import sys
+import os
+
+# Fix for XGBoost on macOS - set library path before importing
+if sys.platform == 'darwin':  # macOS
+    libomp_path = '/opt/homebrew/opt/libomp/lib'
+    if os.path.exists(libomp_path):
+        os.environ['DYLD_LIBRARY_PATH'] = libomp_path + ':' + os.environ.get('DYLD_LIBRARY_PATH', '')
+        # Also try to set it via ctypes for more reliable loading
+        try:
+            import ctypes
+            ctypes.CDLL(os.path.join(libomp_path, 'libomp.dylib'))
+        except:
+            pass
+
 from fastapi import FastAPI
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
