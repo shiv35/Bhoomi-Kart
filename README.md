@@ -4,6 +4,16 @@ A sustainable e-commerce platform with AI-powered recommendations, EarthScore ra
 
 ## 🚀 Quick Start
 
+### Frontend
+```bash
+npm i
+```
+ ```bash
+npm start
+```
+
+### Backend
+
  ```bash
 python3.11 -m venv myenv
 ```
