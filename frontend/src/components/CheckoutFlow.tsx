@@ -171,51 +171,48 @@ const CheckoutFlow: React.FC = () => {
   }, []);
 
   const fetchGroupBuyOptions = async () => {
-    // Mock data - in production, this would call your clustering API
-    const mockOptions: GroupBuyOption[] = [
-      {
-        id: 'gb1',
-        name: 'Mumbai Central Eco Group',
-        matchingProducts: items.slice(0, 2).map(item => item.name),
-        participants: [
-          { name: 'Priya S.', pincode: '400705', avatar: '👩' },
-          { name: 'Rahul M.', pincode: '400703', avatar: '👨' },
-          { name: 'Amit K.', pincode: '400706', avatar: '🧑' }
-        ],
-        savings: {
-          cost: 25.50,
-          co2: 4.2,
-          percentage: 20
-        },
-        minParticipants: 5,
-        currentParticipants: 3,
-        deadline: '2025-06-23',
-        estimatedDelivery: '2025-06-26',
-        status: 'available'
-      },
-      {
-        id: 'gb2',
-        name: 'Andheri West Green Collective',
-        matchingProducts: items.map(item => item.name),
-        participants: [
-          { name: 'Sneha P.', pincode: '400701', avatar: '👩' },
-          { name: 'Vikram R.', pincode: '400702', avatar: '👨' },
-          { name: 'Neha S.', pincode: '400704', avatar: '👩' },
-          { name: 'Arjun D.', pincode: '400705', avatar: '👨' }
-        ],
-        savings: {
-          cost: 32.75,
-          co2: 5.8,
-          percentage: 25
-        },
-        minParticipants: 5,
-        currentParticipants: 4,
-        deadline: '2025-06-22',
-        estimatedDelivery: '2025-06-25',
-        status: 'almost-full'
+    // Use real ML clustering API
+    try {
+      const pincode = shippingAddress.pincode || '400705';
+      console.log('🔍 [CheckoutFlow] Fetching group buy options for pincode:', pincode);
+      
+      const response = await axios.post('http://localhost:8000/api/group-buy/suggestions', {
+        pincode: pincode,
+        items: items.map(item => ({
+          id: item.id,
+          name: item.name || item.product_name,
+          category: item.category || 'general',
+          price: item.price || 0,
+          quantity: item.quantity || 1
+        })),
+        radius: 5.0
+      });
+
+      if (response.data.success && response.data.suggestions) {
+        const transformedOptions = response.data.suggestions.map((suggestion: any) => ({
+          id: suggestion.id,
+          name: suggestion.name,
+          matchingProducts: suggestion.matchingProducts || suggestion.matching_products || [],
+          participants: suggestion.participants || [],
+          savings: suggestion.savings || { cost: 0, co2: 0, percentage: 0 },
+          minParticipants: suggestion.minParticipants || suggestion.min_participants || 3,
+          currentParticipants: suggestion.currentParticipants || suggestion.current_participants || 0,
+          deadline: suggestion.deadline || new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+          estimatedDelivery: suggestion.estimatedDelivery || suggestion.estimated_delivery || new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+          status: suggestion.status || 'available'
+        }));
+        
+        console.log('✅ [CheckoutFlow] Group buy options loaded:', transformedOptions);
+        setGroupBuyOptions(transformedOptions);
+      } else {
+        console.log('⚠️ [CheckoutFlow] No group buy options found');
+        setGroupBuyOptions([]);
       }
-    ];
-    setGroupBuyOptions(mockOptions);
+    } catch (error: any) {
+      console.error('❌ [CheckoutFlow] Error fetching group buy options:', error);
+      // Fallback to empty array on error
+      setGroupBuyOptions([]);
+    }
   };
 
   const packagingOptions: PackagingOption[] = [
@@ -270,12 +267,39 @@ const CheckoutFlow: React.FC = () => {
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
 
+      const orderId = `ORD-${Date.now()}`;
       const groupSavings = selectedGroupBuy
         ? groupBuyOptions.find(g => g.id === selectedGroupBuy)?.savings
         : null;
 
+      // If no group was selected (either skipped or none found), create a new group from this order
+      // This allows future users in the same pincode to join
+      if (!selectedGroupBuy && shippingAddress.pincode && currentUser) {
+        try {
+          console.log('📦 [Checkout] Creating group buy from order for pincode:', shippingAddress.pincode);
+          await axios.post('http://localhost:8000/api/group-buy/create-from-order', {
+            user_id: currentUser.uid,
+            pincode: shippingAddress.pincode,
+            cart_items: items.map(item => ({
+              id: item.id,
+              name: item.name || item.product_name,
+              category: item.category || 'general',
+              price: item.price || 0,
+              quantity: item.quantity || 1,
+              product_id: parseInt(item.id) || 0
+            })),
+            order_id: orderId,
+            target_size: 5
+          });
+          console.log('✅ [Checkout] Group buy created successfully');
+        } catch (groupError: any) {
+          // Don't fail the order if group creation fails
+          console.warn('⚠️ [Checkout] Failed to create group buy (non-critical):', groupError);
+        }
+      }
+
       const confirmation: OrderConfirmation = {
-        orderId: `ORD-${Date.now()}`,
+        orderId: orderId,
         estimatedDelivery: '3-5 business days',
         co2Saved: (getShippingImpact(shippingMethod).co2 || 0) + (groupSavings?.co2 || 0),
         impactPoints: Math.round(getAverageEarthScore() / 10),

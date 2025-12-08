@@ -113,6 +113,75 @@ class GroupBuyService:
 
         return user_group_list
 
+    def create_group_from_order(self, user_id: str, pincode: str, cart_items: List[Dict],
+                               order_id: str, target_size: int = 5) -> Dict:
+        """
+        Create a new group buy opportunity from a completed order
+        This allows future users in the same pincode to join the group
+        
+        Args:
+            user_id: User who placed the order
+            pincode: Pincode/location for the group
+            cart_items: List of items in the order
+            order_id: Order ID for tracking
+            target_size: Target number of participants
+            
+        Returns:
+            Created group buy information
+        """
+        # Create a group for each product category or combine similar products
+        # For simplicity, create one group per pincode with all products
+        group_id = f"GB_{pincode}_{int(datetime.now().timestamp())}"
+        
+        # Extract product IDs and categories
+        product_ids = [int(item.get('id', item.get('product_id', 0))) for item in cart_items if item.get('id') or item.get('product_id')]
+        categories = list(set([item.get('category', 'general') for item in cart_items if item.get('category')]))
+        
+        group = {
+            "group_id": group_id,
+            "product_ids": product_ids,
+            "categories": categories,
+            "initiator": user_id,
+            "order_id": order_id,
+            "location": pincode,
+            "pincode": pincode,  # Store pincode for easy lookup
+            "members": [user_id],
+            "target_size": target_size,
+            "current_size": 1,
+            "status": "open",
+            "created_at": datetime.now().isoformat(),
+            "expires_at": (datetime.now() + timedelta(days=7)).isoformat(),  # 7 days to allow more time
+            "cart_items": cart_items,  # Store cart items for reference
+            "savings": {
+                "packaging_reduction": "40%",
+                "shipping_reduction": "35%",
+                "co2_saved_kg": 2.5
+            }
+        }
+
+        self.active_groups[group_id] = group
+
+        # Track user's groups
+        if user_id not in self.user_groups:
+            self.user_groups[user_id] = []
+        self.user_groups[user_id].append(group_id)
+
+        print(f"✅ [GroupBuy] Created group {group_id} from order {order_id} for pincode {pincode}")
+        
+        return {
+            "status": "success",
+            "message": "Group buy created from your order. Others in your area can now join!",
+            "group": group
+        }
+
+    def find_groups_by_pincode(self, pincode: str) -> List[Dict]:
+        """Find active group buys for a specific pincode"""
+        groups = []
+        for group_id, group in self.active_groups.items():
+            if (group.get("pincode") == pincode or group.get("location") == pincode) and group["status"] == "open":
+                groups.append(group)
+        return groups
+
     def calculate_group_impact(self, group_id: str) -> Dict:
         """Calculate environmental impact of a group buy"""
         if group_id not in self.active_groups:

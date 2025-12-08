@@ -24,6 +24,7 @@ import pickle
 from langchain_core.messages import HumanMessage
 import json
 import uvicorn
+from datetime import datetime, timedelta
 
 # Import the enhanced agent
 from agent import create_greencart_agent
@@ -231,6 +232,38 @@ def express_checkout(request: ExpressCheckoutRequest):
             co2_saved=order.estimated_co2_saved
         )
     }
+
+class CreateGroupFromOrderRequest(BaseModel):
+    user_id: str
+    pincode: str
+    cart_items: List[Dict[str, Any]]
+    order_id: str
+    target_size: int = 5
+
+@app.post("/api/group-buy/create-from-order")
+def create_group_from_order(request: CreateGroupFromOrderRequest):
+    """Create a group buy opportunity from a completed order"""
+    print(f"🔍 [API] Creating group buy from order {request.order_id} for pincode {request.pincode}")
+    
+    if not group_buy_service:
+        raise HTTPException(status_code=503, detail="Group buy service not initialized")
+    
+    try:
+        result = group_buy_service.create_group_from_order(
+            user_id=request.user_id,
+            pincode=request.pincode,
+            cart_items=request.cart_items,
+            order_id=request.order_id,
+            target_size=request.target_size
+        )
+        
+        print(f"✅ [API] Group buy created: {result['group']['group_id']}")
+        return result
+    except Exception as e:
+        print(f"❌ [API] Error creating group from order: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Group buy endpoints
 
@@ -473,26 +506,93 @@ def get_dashboard_data(user_id: str):
 
 @app.post("/api/group-buy/suggestions")
 async def get_group_buy_suggestions(request: dict):
-    """Get optimal group buying suggestions based on location and cart items"""
+    """Get optimal group buying suggestions based on location and cart items using ML clustering"""
+    print(f"🔍 [API] POST /api/group-buy/suggestions called")
+    print(f"📊 [API] Request data: pincode={request.get('pincode')}, items={len(request.get('items', []))}")
+    
+    if not clustering_service:
+        print("❌ [API] Clustering service not initialized")
+        return {
+            "success": False,
+            "error": "Clustering service not available",
+            "suggestions": []
+        }
+    
     try:
         user_pincode = request.get('pincode', '400705')
         cart_items = request.get('items', [])
         radius_km = request.get('radius', 5.0)
 
-        suggestions = clustering_service.find_optimal_groups(
+        if not cart_items:
+            print("⚠️ [API] No cart items provided")
+            return {
+                "success": False,
+                "error": "Cart is empty. Add items to find group buying options.",
+                "suggestions": []
+            }
+
+        # First, check for existing group buys from previous orders
+        existing_group_suggestions = []
+        if group_buy_service:
+            existing_groups = group_buy_service.find_groups_by_pincode(user_pincode)
+            print(f"📊 [API] Found {len(existing_groups)} existing group buys for pincode {user_pincode}")
+            
+            # Convert existing groups to suggestion format
+            for group in existing_groups:
+                # Check if cart items match group categories
+                cart_categories = [item.get('category', '').lower() for item in cart_items if item.get('category')]
+                group_categories = [cat.lower() for cat in group.get('categories', [])]
+                
+                # If there's any category match, include this group
+                if any(cat in group_categories for cat in cart_categories) or not cart_categories:
+                    existing_group_suggestions.append({
+                        'id': group['group_id'],
+                        'name': f"Existing Group - Pincode {user_pincode}",
+                        'matchingProducts': [item.get('name', 'Product') for item in group.get('cart_items', [])[:3]],
+                        'participants': [
+                            {'name': f"User {member}", 'pincode': user_pincode, 'avatar': '👤'}
+                            for member in group.get('members', [])[:5]
+                        ],
+                        'savings': group.get('savings', {'cost': 0, 'co2': 0, 'percentage': 15}),
+                        'minParticipants': group.get('target_size', 5),
+                        'currentParticipants': group.get('current_size', 1),
+                        'deadline': group.get('expires_at', ''),
+                        'estimatedDelivery': (datetime.now() + timedelta(days=5)).isoformat(),
+                        'status': 'available' if group.get('current_size', 1) < group.get('target_size', 5) else 'almost-full',
+                        'commonCategories': group.get('categories', [])
+                    })
+
+        # Get ML clustering suggestions
+        print(f"🔍 [API] Calling clustering service with pincode={user_pincode}, radius={radius_km}km")
+        ml_suggestions = clustering_service.find_optimal_groups(
             user_pincode=user_pincode,
             cart_items=cart_items,
             radius_km=radius_km
         )
 
+        # Combine existing groups and ML suggestions
+        all_suggestions = existing_group_suggestions + ml_suggestions
+        
+        # Remove duplicates based on group ID
+        seen_ids = set()
+        unique_suggestions = []
+        for suggestion in all_suggestions:
+            if suggestion.get('id') not in seen_ids:
+                seen_ids.add(suggestion.get('id'))
+                unique_suggestions.append(suggestion)
+
+        print(f"✅ [API] Returning {len(unique_suggestions)} suggestions ({len(existing_group_suggestions)} existing, {len(ml_suggestions)} ML)")
         return {
             "success": True,
-            "suggestions": suggestions
+            "suggestions": unique_suggestions
         }
     except Exception as e:
+        print(f"❌ [API] Error in group-buy suggestions: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return {
             "success": False,
-            "error": str(e),
+            "error": f"Failed to find group buying options: {str(e)}",
             "suggestions": []
         }
 

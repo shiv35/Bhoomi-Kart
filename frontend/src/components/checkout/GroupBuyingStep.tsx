@@ -92,7 +92,7 @@ const GroupBuyingStep: React.FC<GroupBuyingStepProps> = ({
   const [pincodeError, setPincodeError] = useState('');
   const [searchedPincode, setSearchedPincode] = useState('');
 
-  const USE_MOCK_DATA = true; // Toggle this to switch between mock and real API
+  const USE_MOCK_DATA = false; // Using real ML clustering API
 
   // ADD THIS useEffect to automatically fetch when component mounts with a pincode
   useEffect(() => {
@@ -136,48 +136,68 @@ const GroupBuyingStep: React.FC<GroupBuyingStepProps> = ({
     setLoading(true);
     setError('');
 
-    console.log('Fetching group suggestions for pincode:', pincode);
+    console.log('🔍 [GroupBuy] Fetching group suggestions for pincode:', pincode);
+    console.log('🔍 [GroupBuy] Cart items:', cartItems);
 
     try {
-      let response: { success: boolean, suggestions: GroupBuyOption[] };
+      let response: { success: boolean, suggestions: GroupBuyOption[], error?: string };
 
       if (USE_MOCK_DATA) {
-        console.log('Using mock data...');
+        console.log('⚠️ [GroupBuy] Using mock data...');
         // Use mock data
         response = await MockGroupBuyingService.getMockGroups(pincode, cartItems);
       } else {
-        console.log('Using real API...');
-        // Use real API
+        console.log('✅ [GroupBuy] Using real ML clustering API...');
+        // Use real API with ML clustering
         const apiResponse = await axios.post('http://localhost:8000/api/group-buy/suggestions', {
           pincode: pincode,
           items: cartItems.map(item => ({
             id: item.id,
-            name: item.name,
+            name: item.name || item.product_name,
             category: item.category || 'general',
-            price: item.price,
-            quantity: item.quantity
+            price: item.price || 0,
+            quantity: item.quantity || 1
           })),
           radius: 5.0
         });
         response = apiResponse.data;
+        console.log('✅ [GroupBuy] API Response received:', response);
       }
 
-      console.log('API Response:', response);
+      if (response.success && response.suggestions && response.suggestions.length > 0) {
+        // Transform response to match expected format
+        const transformedSuggestions = response.suggestions.map((suggestion: any) => ({
+          id: suggestion.id,
+          name: suggestion.name,
+          matchingProducts: suggestion.matchingProducts || suggestion.matching_products || [],
+          participants: suggestion.participants || [],
+          savings: suggestion.savings || { cost: 0, co2: 0, percentage: 0 },
+          minParticipants: suggestion.minParticipants || suggestion.min_participants || 3,
+          currentParticipants: suggestion.currentParticipants || suggestion.current_participants || 0,
+          deadline: suggestion.deadline || new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+          estimatedDelivery: suggestion.estimatedDelivery || suggestion.estimated_delivery || new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+          status: suggestion.status || 'available',
+          avgDistance: suggestion.avgDistance || suggestion.avg_distance,
+          commonCategories: suggestion.commonCategories || suggestion.common_categories || []
+        }));
 
-      if (response.success && response.suggestions.length > 0) {
-        setGroupOptions(response.suggestions);
+        console.log('✅ [GroupBuy] Transformed suggestions:', transformedSuggestions);
+        setGroupOptions(transformedSuggestions);
 
         // Auto-select the best option if only one exists
-        if (response.suggestions.length === 1) {
-          onSelectGroup(response.suggestions[0].id);
+        if (transformedSuggestions.length === 1) {
+          onSelectGroup(transformedSuggestions[0].id);
         }
       } else {
-        setError('No group buying options found in your area. You can create a new group or proceed with individual shipping.');
+        const errorMsg = response.error || 'No group buying options found in your area. You can create a new group or proceed with individual shipping.';
+        console.log('⚠️ [GroupBuy] No suggestions found:', errorMsg);
+        setError(errorMsg);
         setGroupOptions([]);
       }
     } catch (err: any) {
-      console.error('Error fetching group suggestions:', err);
-      setError('Failed to load group buying suggestions. Please try again.');
+      console.error('❌ [GroupBuy] Error fetching group suggestions:', err);
+      const errorMessage = err.response?.data?.error || err.message || 'Failed to load group buying suggestions. Please try again.';
+      setError(errorMessage);
       setGroupOptions([]);
     } finally {
       setLoading(false);
