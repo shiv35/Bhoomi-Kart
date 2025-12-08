@@ -7,7 +7,7 @@ class MessageTemplates:
 
     # Greeting messages
     GREETINGS = [
-        "🌱 Welcome to GreenCart! I'm here to help you shop sustainably.",
+        "🌱 Welcome to Bhommi Kart! I'm here to help you shop sustainably.",
         "👋 Hello eco-warrior! Ready to make a positive impact today?",
         "🌍 Hi there! Let's find some earth-friendly products together."
     ]

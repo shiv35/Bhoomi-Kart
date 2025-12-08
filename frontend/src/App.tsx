@@ -113,7 +113,7 @@ const LoadingScreen = () => (
   </Box>
 );
 
-// GreenCart App Layout (your existing layout)
+// Bhommi Kart App Layout (your existing layout)
 const GreenCartLayout: React.FC = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
@@ -150,7 +150,7 @@ const GreenCartLayout: React.FC = () => {
               to="/greencart"
               sx={{ flexGrow: 1, textDecoration: 'none', color: 'inherit' }}
             >
-              GreenCart
+              Bhommi Kart
             </Typography>
 
             <Button
@@ -194,9 +194,19 @@ const GreenCartLayout: React.FC = () => {
               <>
                 <Button
                   color="inherit"
-                  onClick={() => setIsAuthModalOpen(true)}
+                  component={Link}
+                  to="/greencart/login"
+                  sx={{ mr: 1 }}
                 >
-                  Log In / Sign Up
+                  Login
+                </Button>
+                <Button
+                  variant="contained"
+                  color="success"
+                  component={Link}
+                  to="/greencart/signup"
+                >
+                  Sign Up
                 </Button>
               </>
             )}
@@ -347,7 +357,7 @@ const AppLayout: React.FC = () => {
         {/* Amazon UI Routes - Default landing */}
         <Route path="/*" element={<AmazonUIWrapper />} />
 
-        {/* GreenCart Routes - When user clicks GreenCart Zone button */}
+        {/* Bhommi Kart Routes - When user clicks Bhommi Kart Zone button */}
         <Route path="/greencart/*" element={<GreenCartLayout />} />
       </Routes>
     </Suspense>

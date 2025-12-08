@@ -1,4 +1,4 @@
-# Bhommi-Kart - GreenCart E-Commerce Platform
+# Bhommi-Kart - Sustainable E-Commerce Platform
 
 A sustainable e-commerce platform with AI-powered recommendations, EarthScore ratings, and group buying features.
 
@@ -189,7 +189,7 @@ This will:
 - **Real-time Recommendations** based on cart items
 - **Confidence Scoring** for each recommendation
 
-### GreenCart Features
+### Bhommi Kart Features
 - **EarthScore Ratings** - Sustainability scores for products
 - **Group Buying** - Save money and reduce carbon footprint
 - **AI Shopping Assistant** - Chat-based product discovery

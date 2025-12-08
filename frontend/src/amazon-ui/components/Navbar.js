@@ -109,14 +109,14 @@ const AmazonNavigationBar = () => {
           <div className="popover_trigger_nav">
             <Link style={{ textDecoration: "none" }} to="/greencart">
               <button id="itemToTrack" className="button">
-                GreenCart Zone
+                Bhommi Kart Zone
               </button>
             </Link>
             {showPopover && !dontShowAgain && (
               <div className="popover_content_nav">
                 <div className="triangle"></div>
                 <p>
-                  Introducing our brand new section<br></br>GreenCart Zone
+                  Introducing our brand new section<br></br>Bhommi Kart Zone
                 </p>
                 <button onClick={closePopover} className="got_it">
                   Got It

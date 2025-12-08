@@ -28,7 +28,7 @@ const Footer: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <Leaf className="h-8 w-8 text-green-400" />
-              <span className="text-2xl font-bold">GreenCart</span>
+              <span className="text-2xl font-bold">Bhommi Kart</span>
             </div>
             <p className="text-gray-300 mb-4">
               Leading the way in sustainable e-commerce with AI-powered environmental impact optimization.
@@ -160,11 +160,11 @@ const Footer: React.FC = () => {
             <h3 className="text-lg font-semibold mb-4">Contact Info</h3>
             <div className="space-y-3">
               <button
-                onClick={() => handleContactClick('email', 'support@greencart.com')}
+                onClick={() => handleContactClick('email', 'support@bhommikart.com')}
                 className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors text-left"
               >
                 <Mail className="h-4 w-4" />
-                <span>support@greencart.com</span>
+                <span>support@bhommikart.com</span>
               </button>
               <button
                 onClick={() => handleContactClick('phone', '1-800-GREEN-CART')}
@@ -186,7 +186,7 @@ const Footer: React.FC = () => {
 
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            © 2024 GreenCart. All rights reserved. Powered by EarthScore AI.
+            © 2024 Bhommi Kart. All rights reserved. Powered by EarthScore AI.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <button 

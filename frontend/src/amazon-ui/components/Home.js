@@ -90,7 +90,7 @@ function Home() {
             marginTop: "10px",
           }}
         >
-          Available in GreenCart zone
+          Available in Bhommi Kart zone
         </button>
       </div>
     </div>

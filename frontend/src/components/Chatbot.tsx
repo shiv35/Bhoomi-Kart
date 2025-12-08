@@ -86,7 +86,7 @@ const Chatbot: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: 'bot',
-      text: "Hi there! I'm the GreenCart assistant. How can I help you shop sustainably today? Try asking:\n- 'Show me eco-friendly products'\n- 'What's in my cart?'\n- 'Find group buys near me'",
+      text: "Hi there! I'm the Bhommi Kart assistant. How can I help you shop sustainably today? Try asking:\n- 'Show me eco-friendly products'\n- 'What's in my cart?'\n- 'Find group buys near me'",
       agent: 'main',
       timestamp: new Date()
     }
@@ -498,7 +498,7 @@ const Chatbot: React.FC = () => {
       <Drawer anchor="right" open={isOpen} onClose={() => setIsOpen(false)}>
         <Box sx={{ width: 450, height: '100%', display: 'flex', flexDirection: 'column' }}>
           <Paper sx={{ p: 2, bgcolor: 'primary.main', color: 'white', borderRadius: 0 }}>
-            <Typography variant="h6">GreenCart Assistant</Typography>
+            <Typography variant="h6">Bhommi Kart Assistant</Typography>
             <Typography variant="caption">
               Your sustainable shopping companion
             </Typography>

@@ -119,7 +119,7 @@ const Header: React.FC = () => {
           />
           <SpaIcon sx={{ color: 'success.main', mr: 1, fontSize: 32 }} />
           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-            GreenCart
+            Bhommi Kart
           </Typography>
           <Typography variant="body2" sx={{ ml: 1, color: 'text.secondary' }}>
             by EarthScore
@@ -278,14 +278,24 @@ const Header: React.FC = () => {
               </Menu>
             </>
           ) : (
-            <Button
-              variant="contained"
-              color="success"
-              onClick={() => navigate(ROUTES.LOGIN)}
-              sx={{ ml: 2 }}
-            >
-              Login
-            </Button>
+            <>
+              <Button
+                variant="outlined"
+                color="success"
+                onClick={() => navigate(ROUTES.LOGIN)}
+                sx={{ ml: 2, mr: 1 }}
+              >
+                Login
+              </Button>
+              <Button
+                variant="contained"
+                color="success"
+                onClick={() => navigate(ROUTES.SIGNUP)}
+                sx={{ mr: 1 }}
+              >
+                Sign Up
+              </Button>
+            </>
           )}
         </Box>
       </Toolbar>

@@ -70,6 +70,7 @@ interface GroupBuyingStepProps {
   skipGroupBuy: boolean;
   onSkipChange: (skip: boolean) => void;
   onPincodeChange?: (pincode: string) => void;
+  onGroupsSearched?: (searched: boolean, hasGroups: boolean) => void;
 }
 
 const GroupBuyingStep: React.FC<GroupBuyingStepProps> = ({
@@ -79,7 +80,8 @@ const GroupBuyingStep: React.FC<GroupBuyingStepProps> = ({
   onSelectGroup,
   skipGroupBuy,
   onSkipChange,
-  onPincodeChange
+  onPincodeChange,
+  onGroupsSearched
 }) => {
   const [groupOptions, setGroupOptions] = useState<GroupBuyOption[]>([]);
   const [loading, setLoading] = useState(false);
@@ -183,22 +185,37 @@ const GroupBuyingStep: React.FC<GroupBuyingStepProps> = ({
 
         console.log('✅ [GroupBuy] Transformed suggestions:', transformedSuggestions);
         setGroupOptions(transformedSuggestions);
+        
+        // Notify parent that groups were searched and found
+        if (onGroupsSearched) {
+          onGroupsSearched(true, true);
+        }
 
         // Auto-select the best option if only one exists
         if (transformedSuggestions.length === 1) {
           onSelectGroup(transformedSuggestions[0].id);
         }
       } else {
-        const errorMsg = response.error || 'No group buying options found in your area. You can create a new group or proceed with individual shipping.';
+        const errorMsg = response.error || 'No group buying options found in your area. You can proceed with individual shipping.';
         console.log('⚠️ [GroupBuy] No suggestions found:', errorMsg);
         setError(errorMsg);
         setGroupOptions([]);
+        
+        // Notify parent that groups were searched but none found
+        if (onGroupsSearched) {
+          onGroupsSearched(true, false);
+        }
       }
     } catch (err: any) {
       console.error('❌ [GroupBuy] Error fetching group suggestions:', err);
-      const errorMessage = err.response?.data?.error || err.message || 'Failed to load group buying suggestions. Please try again.';
+      const errorMessage = err.response?.data?.error || err.message || 'Failed to load group buying suggestions. You can proceed with individual shipping.';
       setError(errorMessage);
       setGroupOptions([]);
+      
+      // Notify parent that groups were searched but error occurred (treat as no groups)
+      if (onGroupsSearched) {
+        onGroupsSearched(true, false);
+      }
     } finally {
       setLoading(false);
     }
@@ -209,6 +226,11 @@ const GroupBuyingStep: React.FC<GroupBuyingStepProps> = ({
     onSkipChange(!checked);
     if (checked && !searchedPincode) {
       setShowPincodeInput(true);
+    } else if (!checked) {
+      // When user manually skips, notify parent that they can proceed
+      if (onGroupsSearched) {
+        onGroupsSearched(true, false);
+      }
     }
   };
 
@@ -411,8 +433,13 @@ const GroupBuyingStep: React.FC<GroupBuyingStepProps> = ({
         </Grid>
       ) : error ? (
         <Box>
-          <Alert severity="warning" sx={{ mb: 3 }}>
-            {error}
+          <Alert severity="info" sx={{ mb: 3 }}>
+            <Typography variant="body1" sx={{ mb: 1 }}>
+              {error}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              You can continue with your normal shopping process. A group buy opportunity will be created from your order for future users in your area.
+            </Typography>
           </Alert>
           <Box sx={{ textAlign: 'center', mt: 3 }}>
             <Button
@@ -420,11 +447,12 @@ const GroupBuyingStep: React.FC<GroupBuyingStepProps> = ({
               color="success"
               startIcon={<GroupAdd />}
               onClick={() => setShowCreateGroup(true)}
+              sx={{ mb: 2 }}
             >
               Create a New Group Buy
             </Button>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              Start your own group and invite neighbors to join
+              Or continue with individual shipping - your order will create a group for others to join later
             </Typography>
           </Box>
         </Box>

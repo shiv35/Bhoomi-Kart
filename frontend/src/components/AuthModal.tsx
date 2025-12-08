@@ -54,7 +54,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             <UserIcon className="h-8 w-8 text-green-600" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900">
-            {isSignUp ? 'Join GreenCart' : 'Welcome Back'}
+            {isSignUp ? 'Join Bhommi Kart' : 'Welcome Back'}
           </h2>
           <p className="text-gray-600 mt-2">
             {isSignUp 

@@ -149,6 +149,7 @@ const CheckoutFlow: React.FC = () => {
   const [selectedGroupBuy, setSelectedGroupBuy] = useState<string | null>(null);
   const [groupBuyOptions, setGroupBuyOptions] = useState<GroupBuyOption[]>([]);
   const [createNewGroup, setCreateNewGroup] = useState(false);
+  const [groupsSearched, setGroupsSearched] = useState(false); // Track if groups were searched
 
   const [shippingAddress, setShippingAddress] = useState({
     fullName: '',
@@ -246,9 +247,14 @@ const CheckoutFlow: React.FC = () => {
   ];
 
   const handleNext = () => {
-    if (activeStep === 0 && skipGroupBuy) {
-      // Skip group buying step
-      setActiveStep(1);
+    if (activeStep === 0) {
+      // On group buying step, allow proceeding if:
+      // - User skipped group buy, OR
+      // - User selected a group, OR
+      // - Groups were searched but none found (groupsSearched && groupBuyOptions.length === 0)
+      if (skipGroupBuy || selectedGroupBuy || (groupsSearched && groupBuyOptions.length === 0)) {
+        setActiveStep(1);
+      }
     } else if (activeStep === steps.length - 2) {
       handlePlaceOrder();
     } else {
@@ -348,6 +354,13 @@ const CheckoutFlow: React.FC = () => {
       skipGroupBuy={skipGroupBuy}
       onSkipChange={setSkipGroupBuy}
       onPincodeChange={(pincode) => setShippingAddress({ ...shippingAddress, pincode })}
+      onGroupsSearched={(searched, hasGroups) => {
+        setGroupsSearched(searched);
+        if (!hasGroups && searched) {
+          // Auto-enable skip when no groups found after search
+          setSkipGroupBuy(true);
+        }
+      }}
     />
   );
 
@@ -361,10 +374,23 @@ const CheckoutFlow: React.FC = () => {
           </Typography>
         </Alert>
       )}
-
+      
       <Typography variant="h6" gutterBottom>
         Shipping Information
       </Typography>
+      
+      {!selectedGroupBuy && groupsSearched && groupBuyOptions.length === 0 && shippingAddress.pincode && (
+        <Alert severity="info" icon={<GroupAdd />} sx={{ mb: 3 }}>
+          <Typography variant="body1" sx={{ fontWeight: 600, mb: 1 }}>
+            🌿 New Group Buy Will Be Created!
+          </Typography>
+          <Typography variant="body2">
+            No existing groups were found for pincode <strong>{shippingAddress.pincode}</strong>. 
+            After you complete your order, a new group buy opportunity will be automatically created. 
+            Future customers in your area will be able to join and save money together!
+          </Typography>
+        </Alert>
+      )}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12}>
           <TextField
@@ -858,7 +884,7 @@ const CheckoutFlow: React.FC = () => {
               variant="contained"
               color="success"
               onClick={handleNext}
-              disabled={loading || (activeStep === 0 && !skipGroupBuy && !selectedGroupBuy)}
+              disabled={loading || (activeStep === 0 && !skipGroupBuy && !selectedGroupBuy && !(groupsSearched && groupBuyOptions.length === 0))}
             >
               {loading
                 ? <CircularProgress size={24} color="inherit" />
