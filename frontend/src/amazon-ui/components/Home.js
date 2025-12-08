@@ -90,7 +90,7 @@ function Home() {
             marginTop: "10px",
           }}
         >
-          Available in Bhommi Kart zone
+          Available in Bhoomi Kart zone
         </button>
       </div>
     </div>

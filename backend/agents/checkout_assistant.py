@@ -24,7 +24,7 @@ class CheckoutAssistantAgent:
 
         self.cart_service = CartService()
 
-        self.system_instruction = """You are the Bhommi Kart Checkout Assistant, helping users manage their cart and complete purchases.
+        self.system_instruction = """You are the Bhoomi Kart Checkout Assistant, helping users manage their cart and complete purchases.
 
 Your capabilities:
 - View and manage shopping cart
@@ -176,7 +176,7 @@ Every sustainable choice makes a difference! 🌱"""
 
         else:
             # Default cart view
-            response = f"""📦 Your Bhommi Kart Summary:
+            response = f"""📦 Your Bhoomi Kart Summary:
 
 """
             for item in summary["items"]:

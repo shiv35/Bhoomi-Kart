@@ -189,7 +189,7 @@ This will:
 - **Real-time Recommendations** based on cart items
 - **Confidence Scoring** for each recommendation
 
-### Bhommi Kart Features
+### Bhoomi Kart Features
 - **EarthScore Ratings** - Sustainability scores for products
 - **Group Buying** - Save money and reduce carbon footprint
 - **AI Shopping Assistant** - Chat-based product discovery

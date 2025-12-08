@@ -25,7 +25,7 @@ class DealFinderAgent:
 
         self.group_buy_service = GroupBuyService()
 
-        self.system_instruction = """You are the Bhommi Kart Deal Finder, specializing in group buys and sustainable deals.
+        self.system_instruction = """You are the Bhoomi Kart Deal Finder, specializing in group buys and sustainable deals.
 
 Your expertise:
 - Finding and creating group buy opportunities

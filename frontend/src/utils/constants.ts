@@ -1,4 +1,4 @@
-// Constants for Bhommi Kart application
+// Constants for Bhoomi Kart application
 export const GREENCART_BASE_PATH = '/greencart';
 
 // Route constants

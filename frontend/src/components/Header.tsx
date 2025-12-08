@@ -20,7 +20,6 @@ import {
   ShoppingCart,
   Search,
   Person,
-  Dashboard,
   Receipt,
   Logout,
   Settings,
@@ -119,7 +118,7 @@ const Header: React.FC = () => {
           />
           <SpaIcon sx={{ color: 'success.main', mr: 1, fontSize: 32 }} />
           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-            Bhommi Kart
+            Bhoomi Kart
           </Typography>
           <Typography variant="body2" sx={{ ml: 1, color: 'text.secondary' }}>
             by EarthScore
@@ -140,20 +139,7 @@ const Header: React.FC = () => {
 
         {/* Navigation Links */}
         <Box sx={{ display: 'flex', alignItems: 'center', ml: 4 }}>
-          {/* 2) Green “capsule” nav buttons */}
-          <Button
-            component={Link}
-            to="/greencart/group-buy"
-            variant="contained"
-            color="success"
-            sx={{
-              borderRadius: '999px',
-              textTransform: 'none',
-              mx: 1,
-            }}
-          >
-            Group Buys
-          </Button>
+          {/* 2) Green "capsule" nav buttons */}
           <Button
             component={Link}
             to="/greencart/calculator"
@@ -166,19 +152,6 @@ const Header: React.FC = () => {
             }}
           >
             Calculator
-          </Button>
-          <Button
-            component={Link}
-            to="/greencart/dashboard"
-            variant="contained"
-            color="success"
-            sx={{
-              borderRadius: '999px',
-              textTransform: 'none',
-              mx: 1,
-            }}
-          >
-            Dashboard
           </Button>
 
           {/* Cart Icon */}
@@ -255,12 +228,6 @@ const Header: React.FC = () => {
                     <Receipt fontSize="small" />
                   </ListItemIcon>
                   <ListItemText>My Orders</ListItemText>
-                </MenuItem>
-                <MenuItem onClick={() => navigate(ROUTES.DASHBOARD)}>
-                  <ListItemIcon>
-                    <Dashboard fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText>Dashboard</ListItemText>
                 </MenuItem>
                 <Divider />
                 <MenuItem onClick={() => navigate(ROUTES.SETTINGS)}>

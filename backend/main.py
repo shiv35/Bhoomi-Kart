@@ -38,7 +38,7 @@ from services.express_checkout_service import ExpressCheckoutService
 from services.recommender_service import RecommenderService
 from utils.message_templates import MessageTemplates
 
-app = FastAPI(title="Bhommi Kart API")
+app = FastAPI(title="Bhoomi Kart API")
 
 # Add CORS middleware - THIS IS THE FIX
 app.add_middleware(
@@ -100,7 +100,7 @@ def startup_event():
     # Create enhanced agent (optional - requires OPENAI_API_KEY)
     try:
         agent = create_greencart_agent()
-        print("✅ Enhanced Bhommi Kart agent created")
+        print("✅ Enhanced Bhoomi Kart agent created")
     except Exception as e:
         print(f"⚠️  Warning: Could not create AI agent: {e}")
         print("   AI chat features will be disabled, but other features will work.")
@@ -111,7 +111,7 @@ def startup_event():
 
 @app.get("/")
 def read_root():
-    return {"status": "ok", "service": "Bhommi Kart API"}
+    return {"status": "ok", "service": "Bhoomi Kart API"}
 
 
 @app.get("/api/products")

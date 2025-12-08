@@ -161,7 +161,7 @@ def agent_node(state: AgentState, llm):
         
         # Handle greetings and general queries
         if any(greeting in message_lower for greeting in ["hello", "hi", "hey", "good morning", "good afternoon"]):
-            response_text = """Hello! 👋 Welcome to Bhommi Kart!
+            response_text = """Hello! 👋 Welcome to Bhoomi Kart!
 
 I'm your AI-powered sustainable shopping assistant. I'm here to help you:
 - 🛍️ Find eco-friendly products
@@ -173,7 +173,7 @@ How can I help you shop sustainably today?"""
             return {"messages": [AIMessage(content=response_text)]}
         
         elif any(phrase in message_lower for phrase in ["who are you", "what are you", "tell me about yourself"]):
-            response_text = """I'm the Bhommi Kart Assistant! 🌱
+            response_text = """I'm the Bhoomi Kart Assistant! 🌱
 
 I'm an AI-powered shopping companion designed to help you make environmentally conscious purchasing decisions. I can:
 
@@ -187,7 +187,7 @@ I'm here to make sustainable shopping easy and rewarding! What would you like to
             return {"messages": [AIMessage(content=response_text)]}
         
         elif any(phrase in message_lower for phrase in ["what is this store", "what is greencart", "about this store", "what do you sell"]):
-            response_text = """Welcome to Bhommi Kart - Your Sustainable Shopping Destination! 🌍
+            response_text = """Welcome to Bhoomi Kart - Your Sustainable Shopping Destination! 🌍
 
 **What makes us special:**
 
@@ -329,7 +329,7 @@ def create_agent_graph():
         return None
 
     # System prompt for main agent
-    system_prompt = """You are Bhommi Kart's main assistant. You coordinate with specialist agents and use tools when needed.
+    system_prompt = """You are Bhoomi Kart's main assistant. You coordinate with specialist agents and use tools when needed.
 
 When you need to:
 - Search for products: Use the search tool
@@ -376,7 +376,7 @@ Always be helpful and guide users toward sustainable choices."""
 
     # Compile
     agent = graph.compile()
-    print("--- Enhanced Bhommi Kart Agent Compiled Successfully ---")
+    print("--- Enhanced Bhoomi Kart Agent Compiled Successfully ---")
 
     return agent
 

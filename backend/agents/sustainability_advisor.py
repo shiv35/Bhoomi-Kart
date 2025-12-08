@@ -19,7 +19,7 @@ class SustainabilityAdvisorAgent:
             raise ValueError(
                 "OPENAI_API_KEY not found in environment variables")
 
-        self.system_instruction = """You are the Bhommi Kart Sustainability Advisor, an expert in environmental impact and sustainable living.
+        self.system_instruction = """You are the Bhoomi Kart Sustainability Advisor, an expert in environmental impact and sustainable living.
 
 Your expertise includes:
 - Explaining EarthScores and how they're calculated

@@ -113,7 +113,7 @@ const LoadingScreen = () => (
   </Box>
 );
 
-// Bhommi Kart App Layout (your existing layout)
+// Bhoomi Kart App Layout (your existing layout)
 const GreenCartLayout: React.FC = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
@@ -150,16 +150,9 @@ const GreenCartLayout: React.FC = () => {
               to="/greencart"
               sx={{ flexGrow: 1, textDecoration: 'none', color: 'inherit' }}
             >
-              Bhommi Kart
+              Bhoomi Kart
             </Typography>
 
-            <Button
-              color="inherit"
-              component={Link}
-              to="/greencart/group-buy"
-            >
-              Group Buys
-            </Button>
             <Button
               color="inherit"
               component={Link}
@@ -176,13 +169,6 @@ const GreenCartLayout: React.FC = () => {
 
             {currentUser ? (
               <>
-                <Button
-                  color="inherit"
-                  component={Link}
-                  to="/greencart/dashboard"
-                >
-                  Dashboard
-                </Button>
                 <Button
                   color="inherit"
                   onClick={handleLogout}
@@ -357,7 +343,7 @@ const AppLayout: React.FC = () => {
         {/* Amazon UI Routes - Default landing */}
         <Route path="/*" element={<AmazonUIWrapper />} />
 
-        {/* Bhommi Kart Routes - When user clicks Bhommi Kart Zone button */}
+        {/* Bhoomi Kart Routes - When user clicks Bhoomi Kart Zone button */}
         <Route path="/greencart/*" element={<GreenCartLayout />} />
       </Routes>
     </Suspense>

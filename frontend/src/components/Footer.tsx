@@ -28,7 +28,7 @@ const Footer: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <Leaf className="h-8 w-8 text-green-400" />
-              <span className="text-2xl font-bold">Bhommi Kart</span>
+              <span className="text-2xl font-bold">Bhoomi Kart</span>
             </div>
             <p className="text-gray-300 mb-4">
               Leading the way in sustainable e-commerce with AI-powered environmental impact optimization.
@@ -186,7 +186,7 @@ const Footer: React.FC = () => {
 
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            © 2024 Bhommi Kart. All rights reserved. Powered by EarthScore AI.
+            © 2024 Bhoomi Kart. All rights reserved. Powered by EarthScore AI.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <button 

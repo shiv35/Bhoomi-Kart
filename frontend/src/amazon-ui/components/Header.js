@@ -46,13 +46,6 @@ function Header() {
           </div>
         </Link>
 
-        <Link style={{ textDecoration: "none" }} to="/dashboard">
-          <div className="header__option">
-            <span className="header__optionLineOne">Your</span>
-            <span className="header__optionLineTwo">Dashboard</span>
-          </div>
-        </Link>
-
         <Link
           style={{ textDecoration: "none" }}
           to="/checkout"
