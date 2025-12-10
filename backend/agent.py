@@ -3,7 +3,7 @@
 Main GreenCart Agent - Integrates all specialist agents
 """
 
-from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import AIMessage, HumanMessage, ToolMessage, SystemMessage
 from langchain_core.tools import Tool
 from pydantic.v1 import BaseModel, Field
@@ -101,20 +101,10 @@ class AgentState(TypedDict):
 
 
 def initialize_agents(provider: Optional[str] = None):
-    """Initialize all specialist agents
-    
-    Args:
-        provider: LLM provider to use for agents. Options: 'openai', 'gemini', or None (auto-detect).
-                 If None, will check environment variable ORCHESTRATOR_PROVIDER, then auto-detect.
-                 This provider will be used for orchestrator and shopping_assistant.
-    """
-    # Check for provider in environment variable if not provided
-    if provider is None:
-        provider = os.getenv("ORCHESTRATOR_PROVIDER", None)
-    
+    """Initialize all specialist agents (Gemini only)."""
     return {
-        "orchestrator": OrchestratorAgent(provider=provider),
-        "shopping_assistant": ShoppingAssistantAgent(provider=provider),
+        "orchestrator": OrchestratorAgent(),
+        "shopping_assistant": ShoppingAssistantAgent(),
         "sustainability_advisor": SustainabilityAdvisorAgent(),
         "deal_finder": DealFinderAgent(),
         "checkout_assistant": CheckoutAssistantAgent(),
@@ -321,11 +311,11 @@ def should_continue(state: AgentState):
 
 
 def create_agent_graph():
-    """Create the enhanced agent graph with orchestrator"""
-    api_key = os.getenv("OPENAI_API_KEY")
+    """Create the enhanced agent graph with orchestrator (Gemini)"""
+    api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
-        print("⚠️  WARNING: OPENAI_API_KEY not found. AI chat features will be disabled.")
-        print("   To enable AI chat, create a .env file with: OPENAI_API_KEY=your_key_here")
+        print("⚠️  WARNING: GEMINI_API_KEY not found. AI chat features will be disabled.")
+        print("   To enable AI chat, create a .env file with: GEMINI_API_KEY=your_key_here")
         return None
 
     # System prompt for main agent
@@ -338,9 +328,9 @@ When you need to:
 
 Always be helpful and guide users toward sustainable choices."""
 
-    llm = ChatOpenAI(
-        model="gpt-4",
-        openai_api_key=api_key,
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-pro",
+        google_api_key=api_key,
         temperature=0.7
     )
 
@@ -392,7 +382,7 @@ def create_greencart_agent():
         def mock_agent(state):
             from langchain_core.messages import AIMessage
             state["messages"].append(AIMessage(
-                content="AI chat features are currently disabled. Please set OPENAI_API_KEY in your .env file to enable AI assistance. "
+                content="AI chat features are currently disabled. Please set GEMINI_API_KEY in your .env file to enable AI assistance. "
                        "However, you can still browse products, use the recommender system, and manage your cart!"
             ))
             return state

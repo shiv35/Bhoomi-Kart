@@ -7,7 +7,7 @@ from utils.message_templates import MessageTemplates
 from typing import Dict, List, Optional
 import json
 import pandas as pd
-from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage
 import os
 
@@ -15,15 +15,15 @@ import os
 class ShoppingAssistantAgent:
     def __init__(self, api_key: Optional[str] = None):
         """Initialize the shopping assistant agent"""
-        self.api_key = api_key or os.getenv("OPENAI_API_KEY")
+        self.api_key = api_key or os.getenv("GEMINI_API_KEY")
 
         if not self.api_key:
             raise ValueError(
-                "OPENAI_API_KEY not found in environment variables")
+                "GEMINI_API_KEY not found in environment variables")
 
-        self.llm = ChatOpenAI(
-            model="gpt-4",
-            openai_api_key=self.api_key,
+        self.llm = ChatGoogleGenerativeAI(
+            model="gemini-pro",
+            google_api_key=self.api_key,
             temperature=0.3
         )
 

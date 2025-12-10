@@ -1,19 +1,18 @@
 # Environment Variables Setup
 
-## Optional: OpenAI API Key
+## Gemini API Key (required for AI chat)
 
-The OpenAI API key is **optional**. The application will run without it, but AI chat features will be disabled.
+AI chat now uses Google Gemini. The rest of the app works without it.
 
 ### To Enable AI Chat Features:
 
-1. **Get an OpenAI API Key:**
-   - Visit: https://platform.openai.com/api-keys
-   - Sign up or log in
-   - Create a new API key
+1. **Get a Gemini API Key:**
+   - Visit: https://aistudio.google.com/app/apikey
+   - Create a free API key
 
 2. **Create a `.env` file in the `backend/` folder:**
    ```env
-   OPENAI_API_KEY=sk-your-actual-api-key-here
+   GEMINI_API_KEY=your-gemini-api-key
    ```
 
 3. **Restart the backend server**
@@ -32,11 +31,8 @@ The OpenAI API key is **optional**. The application will run without it, but AI 
 ### Example .env file:
 
 ```env
-# OpenAI API Key (Optional - for AI chat features)
-OPENAI_API_KEY=sk-your-key-here
-
-# Optional: Specify LLM provider
-# ORCHESTRATOR_PROVIDER=openai
+# Gemini API Key (Required for AI chat features)
+GEMINI_API_KEY=your-gemini-api-key
 
 # Optional: Redis connection
 # REDIS_URL=redis://localhost:6379

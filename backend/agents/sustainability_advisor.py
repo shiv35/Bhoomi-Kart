@@ -5,7 +5,7 @@ Sustainability Advisor Agent - Provides environmental impact insights and educat
 
 from typing import Dict, List, Optional
 import json
-from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage
 import os
 
@@ -13,11 +13,11 @@ import os
 class SustainabilityAdvisorAgent:
     def __init__(self, api_key: Optional[str] = None):
         """Initialize the sustainability advisor agent"""
-        self.api_key = api_key or os.getenv("OPENAI_API_KEY")
+        self.api_key = api_key or os.getenv("GEMINI_API_KEY")
 
         if not self.api_key:
             raise ValueError(
-                "OPENAI_API_KEY not found in environment variables")
+                "GEMINI_API_KEY not found in environment variables")
 
         self.system_instruction = """You are the Bhoomi Kart Sustainability Advisor, an expert in environmental impact and sustainable living.
 
@@ -36,9 +36,9 @@ Your personality:
 
 Always provide accurate information and help users understand the real impact of their choices."""
 
-        self.llm = ChatOpenAI(
-            model="gpt-4",
-            openai_api_key=self.api_key,
+        self.llm = ChatGoogleGenerativeAI(
+            model="gemini-pro",
+            google_api_key=self.api_key,
             temperature=0.3
         )
 
@@ -199,8 +199,8 @@ if __name__ == "__main__":
     print("🌱 Testing Sustainability Advisor Agent\n")
 
     # Make sure API key is set
-    if not os.getenv("OPENAI_API_KEY"):
-        print("❌ Please set OPENAI_API_KEY environment variable")
+    if not os.getenv("GEMINI_API_KEY"):
+        print("❌ Please set GEMINI_API_KEY environment variable")
         exit(1)
 
     advisor = SustainabilityAdvisorAgent()

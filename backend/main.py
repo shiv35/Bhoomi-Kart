@@ -1,6 +1,8 @@
 # main.py
 import sys
 import os
+from pathlib import Path
+from dotenv import load_dotenv
 
 # Fix for XGBoost on macOS - set library path before importing
 if sys.platform == 'darwin':  # macOS
@@ -25,6 +27,11 @@ from langchain_core.messages import HumanMessage
 import json
 import uvicorn
 from datetime import datetime, timedelta
+
+# Ensure environment variables are loaded from both backend and project root
+BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR / ".env")
+load_dotenv(BASE_DIR.parent / ".env")
 
 # Import the enhanced agent
 from agent import create_greencart_agent
@@ -97,7 +104,7 @@ def startup_event():
     recommender_service.train(num_transactions=2000)
     print("✅ Recommender system trained")
 
-    # Create enhanced agent (optional - requires OPENAI_API_KEY)
+    # Create enhanced agent (requires GEMINI_API_KEY)
     try:
         agent = create_greencart_agent()
         print("✅ Enhanced Bhoomi Kart agent created")
@@ -154,6 +161,64 @@ def filter_products(
             "earth_score_min": earth_score_min,
             "earth_score_max": earth_score_max
         }
+    }
+
+
+# Profile endpoint - derives sustainability stats from cart data
+@app.get("/api/profile/{user_id}")
+def get_profile(user_id: str):
+    """
+    Return profile data with live cart-derived sustainability stats.
+    Uses cart contents to compute CO2 saved and related metrics.
+    """
+    display_name = user_id if user_id != "guest" else "Eco Warrior"
+
+    summary = cart_service.get_cart_summary(user_id)
+    items = summary.get("items", [])
+    total_items = summary.get("total_items", 0)
+
+    # Simple impact estimations (aligned with checkout assistant assumptions)
+    cart_co2_saved = sum(item["quantity"] * 0.5 for item in items)  # kg CO2 saved assumption
+
+    # Persist recent CO2 saved so it survives page reloads for some time
+    snapshot = cart_service.get_impact_snapshot(user_id)
+    snapshot_co2 = snapshot.get("co2_saved", 0) if snapshot else 0
+
+    # Use the higher of current cart or last snapshot to avoid double-counting
+    effective_co2_saved = max(cart_co2_saved, snapshot_co2)
+
+    # Save snapshot with TTL (30 days)
+    cart_service.save_impact_snapshot(user_id, effective_co2_saved, ttl_days=30)
+
+    plastic_bottles_saved = int(effective_co2_saved * 10)  # derived proxy
+    water_saved_liters = int(effective_co2_saved * 30)
+    trees_equiv = round(effective_co2_saved / 22, 2)  # rough kg CO2 per tree per year
+
+    sustainability_stats = {
+        "totalCO2Saved": round(effective_co2_saved, 2),
+        "treesEquivalent": trees_equiv,
+        "plasticBottlesSaved": plastic_bottles_saved,
+        "waterSaved": water_saved_liters,
+        "level": 1 if total_items < 5 else 2 if total_items < 15 else 3,
+        "levelName": "Getting Started" if total_items < 5 else "Eco Enthusiast" if total_items < 15 else "Eco Champion",
+        "nextLevelProgress": min(100, int((total_items % 10) * 10))
+    }
+
+    return {
+        "displayName": display_name,
+        "email": "",
+        "phone": "",
+        "address": "",
+        "city": "",
+        "pincode": "",
+        "preferences": {
+            "emailNotifications": True,
+            "groupBuyAlerts": True,
+            "priceDropAlerts": False,
+            "sustainabilityTips": True
+        },
+        "sustainabilityStats": sustainability_stats,
+        "cartSummary": summary
     }
 
 # Cart endpoints
@@ -296,7 +361,7 @@ async def chat_with_agent(request: ChatRequest):
     """Enhanced chat endpoint with multi-agent support and structured product data"""
     if not agent:
         return {
-            "reply": "AI chat features are currently disabled. Please set OPENAI_API_KEY in your .env file to enable AI assistance. "
+            "reply": "AI chat features are currently disabled. Please set GEMINI_API_KEY in your .env file to enable AI assistance. "
                     "However, you can still browse products, use the recommender system, and manage your cart!",
             "agent_used": "none",
             "routing": {},

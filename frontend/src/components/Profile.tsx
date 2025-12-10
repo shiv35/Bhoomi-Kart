@@ -1,6 +1,6 @@
 // src/components/Profile.tsx
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Container,
   Typography,
@@ -49,17 +49,20 @@ import { auth } from '../firebase';
 import { signOut } from 'firebase/auth';
 import { ROUTES } from '../utils/constants';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
 const Profile: React.FC = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState({
     displayName: currentUser?.displayName || 'Eco Warrior',
     email: currentUser?.email || '',
-    phone: '+91 9876543210',
-    address: '123 Green Street',
-    city: 'Mumbai',
-    pincode: '400001'
+    phone: '',
+    address: '',
+    city: '',
+    pincode: ''
   });
   const [preferences, setPreferences] = useState({
     emailNotifications: true,
@@ -67,16 +70,16 @@ const Profile: React.FC = () => {
     priceDropAlerts: false,
     sustainabilityTips: true
   });
-
-  const sustainabilityStats = {
-    totalCO2Saved: 45.8,
-    treesEquivalent: 2,
-    plasticBottlesSaved: 156,
-    waterSaved: 2340,
-    level: 3,
-    levelName: 'Eco Enthusiast',
-    nextLevelProgress: 75
-  };
+  const [sustainabilityStats, setSustainabilityStats] = useState({
+    totalCO2Saved: 0,
+    treesEquivalent: 0,
+    plasticBottlesSaved: 0,
+    waterSaved: 0,
+    level: 1,
+    levelName: 'Getting Started',
+    nextLevelProgress: 0
+  });
+  const [cartSummary, setCartSummary] = useState<any>(null);
 
   const handleLogout = async () => {
     try {
@@ -91,6 +94,34 @@ const Profile: React.FC = () => {
     // In prod, send profileData to backend
     setEditDialogOpen(false);
   };
+
+  useEffect(() => {
+    const userId = currentUser?.uid || 'guest';
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/profile/${userId}`);
+        if (!res.ok) throw new Error('Failed to fetch profile');
+        const data = await res.json();
+        setProfileData((prev) => ({
+          ...prev,
+          displayName: data.displayName || prev.displayName,
+          email: data.email || prev.email,
+          phone: data.phone || prev.phone,
+          address: data.address || prev.address,
+          city: data.city || prev.city,
+          pincode: data.pincode || prev.pincode
+        }));
+        if (data.preferences) setPreferences(data.preferences);
+        if (data.sustainabilityStats) setSustainabilityStats(data.sustainabilityStats);
+        if (data.cartSummary) setCartSummary(data.cartSummary);
+      } catch (err) {
+        console.error('Profile fetch failed', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, [currentUser]);
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>

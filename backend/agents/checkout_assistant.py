@@ -6,7 +6,7 @@ Checkout Assistant Agent - Manages cart operations and checkout process
 from services.cart_service import CartService
 from typing import Dict, List, Optional
 import json
-from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage
 import os
 import sys
@@ -16,11 +16,11 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 class CheckoutAssistantAgent:
     def __init__(self, api_key: Optional[str] = None):
         """Initialize the checkout assistant agent"""
-        self.api_key = api_key or os.getenv("OPENAI_API_KEY")
+        self.api_key = api_key or os.getenv("GEMINI_API_KEY")
 
         if not self.api_key:
             raise ValueError(
-                "OPENAI_API_KEY not found in environment variables")
+                "GEMINI_API_KEY not found in environment variables")
 
         self.cart_service = CartService()
 
@@ -41,9 +41,9 @@ Your personality:
 
 Always show the environmental impact of their cart and suggest ways to make it even greener."""
 
-        self.llm = ChatOpenAI(
-            model="gpt-4",
-            openai_api_key=self.api_key,
+        self.llm = ChatGoogleGenerativeAI(
+            model="gemini-pro",
+            google_api_key=self.api_key,
             temperature=0.3
         )
 
@@ -200,8 +200,8 @@ Every sustainable choice makes a difference! 🌱"""
 if __name__ == "__main__":
     print("🛒 Testing Checkout Assistant Agent\n")
 
-    if not os.getenv("OPENAI_API_KEY"):
-        print("❌ Please set OPENAI_API_KEY environment variable")
+    if not os.getenv("GEMINI_API_KEY"):
+        print("❌ Please set GEMINI_API_KEY environment variable")
         exit(1)
 
     # Add some items to cart for testing

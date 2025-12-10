@@ -7,7 +7,7 @@ from services.group_buy_service import GroupBuyService
 from typing import Dict, List, Optional
 import json
 from datetime import datetime, timedelta
-from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage
 import os
 import sys
@@ -17,11 +17,11 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 class DealFinderAgent:
     def __init__(self, api_key: Optional[str] = None):
         """Initialize the deal finder agent"""
-        self.api_key = api_key or os.getenv("OPENAI_API_KEY")
+        self.api_key = api_key or os.getenv("GEMINI_API_KEY")
 
         if not self.api_key:
             raise ValueError(
-                "OPENAI_API_KEY not found in environment variables")
+                "GEMINI_API_KEY not found in environment variables")
 
         self.group_buy_service = GroupBuyService()
 
@@ -41,9 +41,9 @@ Your personality:
 
 Always emphasize both financial and environmental benefits of group buying."""
 
-        self.llm = ChatOpenAI(
-            model="gpt-4",
-            openai_api_key=self.api_key,
+        self.llm = ChatGoogleGenerativeAI(
+            model="gemini-pro",
+            google_api_key=self.api_key,
             temperature=0.7
         )
 
@@ -176,8 +176,8 @@ We'll notify you when the group buy completes."""
 if __name__ == "__main__":
     print("💰 Testing Deal Finder Agent\n")
 
-    if not os.getenv("OPENAI_API_KEY"):
-        print("❌ Please set OPENAI_API_KEY environment variable")
+    if not os.getenv("GEMINI_API_KEY"):
+        print("❌ Please set GEMINI_API_KEY environment variable")
         exit(1)
 
     finder = DealFinderAgent()

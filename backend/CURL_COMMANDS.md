@@ -131,7 +131,7 @@ curl -X POST http://localhost:8000/api/chat \
   }'
 ```
 
-**Note:** Requires OPENAI_API_KEY in .env file. If not set, returns a helpful message.
+**Note:** Requires GEMINI_API_KEY in .env file. If not set, returns a helpful message.
 
 ---
 

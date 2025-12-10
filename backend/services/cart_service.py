@@ -27,6 +27,10 @@ class CartService:
         """Generate Redis key for user's cart"""
         return f"cart:{user_id}"
 
+    def _get_impact_key(self, user_id: str) -> str:
+        """Generate Redis key for user's impact snapshot"""
+        return f"impact:{user_id}"
+
     def add_to_cart(self, user_id: str, product_id: int, product_name: str,
                     quantity: int, price: float, earth_score: int) -> Dict:
         """Add item to user's cart"""
@@ -58,6 +62,40 @@ class CartService:
             "message": f"Added {quantity} x {product_name} to cart",
             "cart_item": cart_item
         }
+
+    # --- Impact snapshot helpers ---
+    def save_impact_snapshot(self, user_id: str, co2_saved: float, ttl_days: int = 30):
+        """
+        Persist the latest CO2 saved estimate for a user with a TTL.
+        This avoids double-counting while keeping recent history.
+        """
+        impact_key = self._get_impact_key(user_id)
+        data = {
+            "co2_saved": round(co2_saved, 2),
+            "updated_at": datetime.utcnow().isoformat()
+        }
+
+        if self.redis_client:
+            self.redis_client.set(impact_key, json.dumps(data), ex=ttl_days * 24 * 3600)
+        else:
+            if not hasattr(self, "impact_memory"):
+                self.impact_memory = {}
+            self.impact_memory[user_id] = data
+
+        return data
+
+    def get_impact_snapshot(self, user_id: str) -> Optional[Dict]:
+        """Retrieve last saved impact snapshot if present."""
+        impact_key = self._get_impact_key(user_id)
+
+        if self.redis_client:
+            raw = self.redis_client.get(impact_key)
+            return json.loads(raw) if raw else None
+
+        if hasattr(self, "impact_memory") and user_id in self.impact_memory:
+            return self.impact_memory[user_id]
+
+        return None
 
     def get_cart(self, user_id: str) -> List[Dict]:
         """Get all items in user's cart"""
